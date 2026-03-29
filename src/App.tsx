@@ -1,23 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { SplashScreen } from './components/SplashScreen';
 import { AuthPage } from './components/AuthPage';
 import { Sidebar } from './components/Sidebar';
-import { Dashboard } from './components/Dashboard';
-import { ResumeUpload } from './components/ResumeUpload';
-import { CandidateDatabase } from './components/CandidateDatabase';
-import { JobDescriptions } from './components/JobDescriptions';
-import { Analytics } from './components/Analytics';
-import { Settings } from './components/Settings';
-import { SemanticMatching } from './components/SemanticMatching';
-import { HiringPrediction } from './components/HiringPrediction';
-import { FraudDetection } from './components/FraudDetection';
-import { JDGenerator } from './components/JDGenerator';
-import { Pricing } from './components/Pricing';
-import { UpgradeModal } from './components/UpgradeModal';
-import { Bell, Search, User } from 'lucide-react';
+import { Bell, Search, User, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { FEATURE_PLANS, PlanLevel } from './context/AppContext';
+
+// Lazy load components for better performance
+const Dashboard = lazy(() => import('./components/Dashboard').then(m => ({ default: m.Dashboard })));
+const ResumeUpload = lazy(() => import('./components/ResumeUpload').then(m => ({ default: m.ResumeUpload })));
+const CandidateDatabase = lazy(() => import('./components/CandidateDatabase').then(m => ({ default: m.CandidateDatabase })));
+const JobDescriptions = lazy(() => import('./components/JobDescriptions').then(m => ({ default: m.JobDescriptions })));
+const Analytics = lazy(() => import('./components/Analytics').then(m => ({ default: m.Analytics })));
+const Settings = lazy(() => import('./components/Settings').then(m => ({ default: m.Settings })));
+const SemanticMatching = lazy(() => import('./components/SemanticMatching').then(m => ({ default: m.SemanticMatching })));
+const HiringPrediction = lazy(() => import('./components/HiringPrediction').then(m => ({ default: m.HiringPrediction })));
+const FraudDetection = lazy(() => import('./components/FraudDetection').then(m => ({ default: m.FraudDetection })));
+const JDGenerator = lazy(() => import('./components/JDGenerator').then(m => ({ default: m.JDGenerator })));
+const Pricing = lazy(() => import('./components/Pricing').then(m => ({ default: m.Pricing })));
+const UpgradeModal = lazy(() => import('./components/UpgradeModal').then(m => ({ default: m.UpgradeModal })));
+
+const LoadingFallback = () => (
+  <div className="flex items-center justify-center h-full">
+    <Loader2 className="w-8 h-8 text-blue-600 animate-spin opacity-20" />
+  </div>
+);
 
 const AppContent: React.FC = () => {
   const [showSplash, setShowSplash] = useState(true);
@@ -147,17 +155,19 @@ const AppContent: React.FC = () => {
 
         {/* Content Area */}
         <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-            >
-              {renderContent()}
-            </motion.div>
-          </AnimatePresence>
+          <Suspense fallback={<LoadingFallback />}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                transition={{ duration: 0.15, ease: "easeOut" }}
+              >
+                {renderContent()}
+              </motion.div>
+            </AnimatePresence>
+          </Suspense>
         </div>
 
         <UpgradeModal 

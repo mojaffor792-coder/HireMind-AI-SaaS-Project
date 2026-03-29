@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { motion } from 'motion/react';
 import { 
   Check, 
@@ -170,7 +170,7 @@ interface PricingProps {
   onBack?: () => void;
 }
 
-export const Pricing: React.FC<PricingProps> = ({ highlightedPlan, onSelect, onBack }) => {
+export const Pricing = memo<PricingProps>(({ highlightedPlan, onSelect, onBack }) => {
   const { user, upgradePlan } = useApp();
   const planRefs = React.useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -441,4 +441,4 @@ export const Pricing: React.FC<PricingProps> = ({ highlightedPlan, onSelect, onB
       </div>
     </div>
   );
-};
+});

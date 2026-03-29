@@ -1,5 +1,4 @@
-import React from 'react';
-import { motion } from 'motion/react';
+import React, { memo } from 'react';
 import { 
   LayoutDashboard, 
   UploadCloud, 
@@ -28,7 +27,7 @@ interface SidebarProps {
   onLockedClick: (featureId: string) => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, onLogout, onLockedClick }) => {
+export const Sidebar = memo<SidebarProps>(({ activeTab, setActiveTab, onLogout, onLockedClick }) => {
   const { hasAccess } = useApp();
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -105,4 +104,4 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, onLog
       </div>
     </div>
   );
-};
+});

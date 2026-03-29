@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { motion } from 'motion/react';
 import { Mail, Lock, Github, Linkedin, Building2, User, ArrowRight } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { cn } from '../lib/utils';
 import { Logo } from './Logo';
 
-export const AuthPage: React.FC = () => {
+export const AuthPage = memo(() => {
   const [isLogin, setIsLogin] = useState(true);
   const { setUser } = useApp();
   const [formData, setFormData] = useState({
@@ -38,6 +38,7 @@ export const AuthPage: React.FC = () => {
             rotate: [0, 5, 0]
           }}
           transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          style={{ willChange: 'transform, opacity' }}
           className="absolute top-[-10%] left-[-10%] w-[80%] h-[80%] bg-indigo-500/5 blur-[120px] rounded-full"
         />
         <motion.div 
@@ -47,6 +48,7 @@ export const AuthPage: React.FC = () => {
             rotate: [0, -5, 0]
           }}
           transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+          style={{ willChange: 'transform, opacity' }}
           className="absolute bottom-[-10%] right-[-10%] w-[70%] h-[70%] bg-slate-500/5 blur-[120px] rounded-full"
         />
       </div>
@@ -195,4 +197,4 @@ export const AuthPage: React.FC = () => {
       </motion.div>
     </div>
   );
-};
+});

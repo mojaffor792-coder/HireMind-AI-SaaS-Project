@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { 
   Users, 
   UserCheck, 
@@ -30,31 +30,34 @@ interface DashboardProps {
 export const Dashboard: React.FC<DashboardProps> = ({ onViewAll }) => {
   const { candidates } = useApp();
 
-  const totalApplicants = candidates.length;
-  const shortlisted = candidates.filter(c => c.status === 'Shortlisted').length;
-  const interviews = candidates.filter(c => c.status === 'Interview Scheduled').length;
-  const hired = candidates.filter(c => c.status === 'Hired').length;
+  const { stats, conversionRate, chartData } = useMemo(() => {
+    const totalApplicants = candidates.length;
+    const shortlisted = candidates.filter(c => c.status === 'Shortlisted').length;
+    const interviews = candidates.filter(c => c.status === 'Interview Scheduled').length;
+    const hired = candidates.filter(c => c.status === 'Hired').length;
 
-  const stats = [
-    { label: 'Total Applicants', value: totalApplicants.toLocaleString(), icon: Users, color: 'blue', trend: totalApplicants > 0 ? '+0%' : '0%' },
-    { label: 'Shortlisted', value: shortlisted.toLocaleString(), icon: UserCheck, color: 'purple', trend: shortlisted > 0 ? '+0%' : '0%' },
-    { label: 'Interviews', value: interviews.toLocaleString(), icon: Calendar, color: 'emerald', trend: interviews > 0 ? '+0%' : '0%' },
-    { label: 'Hired Candidates', value: hired.toLocaleString(), icon: Briefcase, color: 'amber', trend: hired > 0 ? '+0%' : '0%' },
-  ];
+    const statsList = [
+      { label: 'Total Applicants', value: totalApplicants.toLocaleString(), icon: Users, color: 'blue', trend: totalApplicants > 0 ? '+0%' : '0%' },
+      { label: 'Shortlisted', value: shortlisted.toLocaleString(), icon: UserCheck, color: 'purple', trend: shortlisted > 0 ? '+0%' : '0%' },
+      { label: 'Interviews', value: interviews.toLocaleString(), icon: Calendar, color: 'emerald', trend: interviews > 0 ? '+0%' : '0%' },
+      { label: 'Hired Candidates', value: hired.toLocaleString(), icon: Briefcase, color: 'amber', trend: hired > 0 ? '+0%' : '0%' },
+    ];
 
-  const conversionRate = totalApplicants > 0 ? ((hired / totalApplicants) * 100).toFixed(1) : '0.0';
+    const rate = totalApplicants > 0 ? ((hired / totalApplicants) * 100).toFixed(1) : '0.0';
 
-  // Group candidates by day of week for the chart
-  const chartData = days.map(day => {
-    const count = candidates.filter(c => {
-      const date = new Date(c.appliedDate);
-      return days[date.getDay()] === day;
-    }).length;
-    return { name: day, apps: count };
-  });
+    const chart = days.map(day => {
+      const count = candidates.filter(c => {
+        const date = new Date(c.appliedDate);
+        return days[date.getDay()] === day;
+      }).length;
+      return { name: day, apps: count };
+    });
+
+    return { stats: statsList, conversionRate: rate, chartData: chart };
+  }, [candidates]);
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Recruitment Overview</h1>

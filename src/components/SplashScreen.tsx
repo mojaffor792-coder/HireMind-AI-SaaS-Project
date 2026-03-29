@@ -17,6 +17,7 @@ export const SplashScreen: React.FC<{ onComplete: () => void }> = ({ onComplete 
             opacity: [0.05, 0.1, 0.05]
           }}
           transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          style={{ willChange: 'transform, opacity' }}
           className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-[#6C63FF] blur-[120px] rounded-full"
         />
         <motion.div 
@@ -27,6 +28,7 @@ export const SplashScreen: React.FC<{ onComplete: () => void }> = ({ onComplete 
             opacity: [0.03, 0.08, 0.03]
           }}
           transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+          style={{ willChange: 'transform, opacity' }}
           className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-[#2563EB] blur-[120px] rounded-full"
         />
         <motion.div 
@@ -35,6 +37,7 @@ export const SplashScreen: React.FC<{ onComplete: () => void }> = ({ onComplete 
             opacity: [0.02, 0.06, 0.02]
           }}
           transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+          style={{ willChange: 'transform, opacity' }}
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40%] h-[40%] bg-[#4F46E5] blur-[150px] rounded-full"
         />
       </div>
@@ -81,7 +84,7 @@ export const SplashScreen: React.FC<{ onComplete: () => void }> = ({ onComplete 
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.5, duration: 0.8 }}
+          transition={{ delay: 0.4, duration: 0.6 }}
           className="flex flex-col sm:flex-row items-center gap-4 mb-16"
         >
           <button
@@ -101,6 +104,14 @@ export const SplashScreen: React.FC<{ onComplete: () => void }> = ({ onComplete 
             View Pricing
           </button>
         </motion.div>
+
+        {/* Skip Button */}
+        <button 
+          onClick={onComplete}
+          className="absolute top-8 right-8 text-xs font-bold text-gray-400 hover:text-gray-600 uppercase tracking-widest transition-colors"
+        >
+          Skip Intro
+        </button>
 
         {/* Trust Elements */}
         <motion.div
@@ -136,7 +147,7 @@ const TypewriterText: React.FC<{ text: string }> = ({ text }) => {
   const [displayedText, setDisplayedText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const [loopNum, setLoopNum] = useState(0);
-  const [typingSpeed, setTypingSpeed] = useState(100);
+  const [typingSpeed, setTypingSpeed] = useState(60);
 
   useEffect(() => {
     const handleType = () => {
@@ -147,10 +158,10 @@ const TypewriterText: React.FC<{ text: string }> = ({ text }) => {
           : fullText.substring(0, displayedText.length + 1)
       );
 
-      setTypingSpeed(isDeleting ? 50 : 100);
+      setTypingSpeed(isDeleting ? 30 : 60);
 
       if (!isDeleting && displayedText === fullText) {
-        setTimeout(() => setIsDeleting(true), 2000);
+        setTimeout(() => setIsDeleting(true), 1500);
       } else if (isDeleting && displayedText === '') {
         setIsDeleting(false);
         setLoopNum(loopNum + 1);
