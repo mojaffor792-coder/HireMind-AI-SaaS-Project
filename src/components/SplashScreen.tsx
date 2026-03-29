@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { BrainCircuit, ArrowRight, Shield, Zap, Users, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Shield, Zap, Users, CheckCircle2 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { Logo } from './Logo';
 
 export const SplashScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   return (
@@ -46,8 +47,8 @@ export const SplashScreen: React.FC<{ onComplete: () => void }> = ({ onComplete 
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="flex flex-col items-center mb-12"
         >
-          <div className="w-20 h-20 bg-gradient-to-br from-[#6C63FF] via-[#4F46E5] to-[#2563EB] rounded-[24px] flex items-center justify-center shadow-[0_20px_40px_rgba(79,70,229,0.25)] mb-6 group cursor-default">
-            <BrainCircuit className="w-11 h-11 text-white group-hover:scale-110 transition-transform duration-500" />
+          <div className="mb-6 group cursor-default">
+            <Logo size={80} className="text-indigo-600 group-hover:scale-110 transition-transform duration-500" />
           </div>
           
           <h1 className="text-3xl font-black text-gray-900 tracking-tight mb-3">

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { BrainCircuit, Mail, Lock, Github, Linkedin, Building2, User, ArrowRight } from 'lucide-react';
+import { Mail, Lock, Github, Linkedin, Building2, User, ArrowRight } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { cn } from '../lib/utils';
+import { Logo } from './Logo';
 
 export const AuthPage: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -63,9 +64,9 @@ export const AuthPage: React.FC = () => {
           <div className="flex flex-col items-center mb-10">
             <motion.div 
               whileHover={{ scale: 1.05, rotate: 5 }}
-              className="w-14 h-14 bg-white border border-gray-100 rounded-2xl flex items-center justify-center mb-6 shadow-xl backdrop-blur-md"
+              className="mb-6"
             >
-              <BrainCircuit className="w-8 h-8 text-indigo-600" />
+              <Logo size={64} className="text-indigo-600" />
             </motion.div>
             
             <h2 className="text-3xl font-light text-gray-900 tracking-[0.12em] uppercase mb-2">
