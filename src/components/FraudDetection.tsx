@@ -20,7 +20,7 @@ import {
 import { useApp } from '../context/AppContext';
 import { detectResumeFraud, FraudDetectionResult, Candidate } from '../services/gemini';
 import { cn } from '../lib/utils';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 
 export const FraudDetection: React.FC = () => {
   const { candidates } = useApp();
