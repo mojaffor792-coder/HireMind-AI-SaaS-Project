@@ -52,51 +52,58 @@ export const Analytics: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Hiring Analytics</h1>
-        <p className="text-gray-500 text-sm">Deep dive into your recruitment performance and candidate pipeline.</p>
+        <h1 className="text-3xl font-display font-bold text-gray-900 tracking-tight">Hiring Analytics</h1>
+        <p className="text-gray-500 text-sm mt-1">Deep dive into your recruitment performance and candidate pipeline.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {stats.map((stat) => (
-          <div key={stat.label} className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+          <div key={stat.label} className="glass-card rounded-[24px] p-6 premium-shadow group hover:translate-y-[-4px] transition-all duration-300">
             <div className={cn(
-              "w-10 h-10 rounded-xl flex items-center justify-center mb-3",
+              "w-12 h-12 rounded-2xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110",
               stat.color === 'blue' ? "bg-blue-50 text-blue-600" :
               stat.color === 'purple' ? "bg-purple-50 text-purple-600" :
               "bg-emerald-50 text-emerald-600"
             )}>
-              <stat.icon className="w-5 h-5" />
+              <stat.icon className="w-6 h-6" />
             </div>
-            <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">{stat.label}</p>
-            <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5">{stat.label}</p>
+            <p className="text-3xl font-display font-bold text-gray-900">{stat.value}</p>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
-          <h3 className="text-lg font-bold text-gray-900 mb-6">Recruitment Funnel</h3>
-          <div className="h-[300px] w-full">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="glass-card rounded-[32px] p-8 premium-shadow">
+          <h3 className="text-xl font-display font-bold text-gray-900 mb-8">Recruitment Funnel</h3>
+          <div className="h-[320px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={funnelData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
+              <BarChart data={funnelData} layout="vertical" margin={{ left: 20, right: 30 }}>
+                <CartesianGrid strokeDasharray="8 8" stroke="#00000008" horizontal={false} />
                 <XAxis type="number" hide />
                 <YAxis 
                   dataKey="name" 
                   type="category" 
-                  stroke="#9ca3af" 
+                  stroke="#94a3b8" 
                   fontSize={12} 
                   tickLine={false} 
                   axisLine={false}
                   width={100}
                 />
                 <Tooltip 
-                  cursor={{ fill: '#f9fafb' }}
-                  contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '12px', color: '#111827' }}
+                  cursor={{ fill: '#f8fafc', radius: 8 }}
+                  contentStyle={{ 
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+                    backdropFilter: 'blur(8px)',
+                    border: '1px solid rgba(255, 255, 255, 0.4)', 
+                    borderRadius: '16px',
+                    boxShadow: '0 10px 30px -10px rgba(0,0,0,0.1)'
+                  }}
+                  itemStyle={{ color: '#1e293b', fontWeight: 'bold' }}
                 />
-                <Bar dataKey="value" radius={[0, 8, 8, 0]} barSize={32}>
+                <Bar dataKey="value" radius={[0, 12, 12, 0]} barSize={32}>
                   {funnelData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.fill} />
                   ))}
@@ -106,37 +113,44 @@ export const Analytics: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
-          <h3 className="text-lg font-bold text-gray-900 mb-6">Candidate Sources</h3>
-          <div className="flex items-center h-[300px]">
-            <div className="w-1/2 h-full">
+        <div className="glass-card rounded-[32px] p-8 premium-shadow">
+          <h3 className="text-xl font-display font-bold text-gray-900 mb-8">Candidate Sources</h3>
+          <div className="flex flex-col md:flex-row items-center h-full gap-8">
+            <div className="w-full md:w-1/2 h-[280px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={sourceData}
-                    innerRadius={60}
+                    innerRadius={70}
                     outerRadius={100}
-                    paddingAngle={5}
+                    paddingAngle={8}
                     dataKey="value"
+                    stroke="none"
                   >
                     {sourceData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
                   <Tooltip 
-                    contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '12px', color: '#111827' }}
+                    contentStyle={{ 
+                      backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+                      backdropFilter: 'blur(8px)',
+                      border: '1px solid rgba(255, 255, 255, 0.4)', 
+                      borderRadius: '16px',
+                      boxShadow: '0 10px 30px -10px rgba(0,0,0,0.1)'
+                    }}
                   />
                 </PieChart>
               </ResponsiveContainer>
             </div>
-            <div className="w-1/2 space-y-4">
+            <div className="w-full md:w-1/2 space-y-5">
               {sourceData.map((source, i) => (
-                <div key={source.name} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
-                    <span className="text-xs text-gray-500">{source.name}</span>
+                <div key={source.name} className="flex items-center justify-between p-3 rounded-2xl hover:bg-gray-50/50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
+                    <span className="text-sm font-medium text-gray-600">{source.name}</span>
                   </div>
-                  <span className="text-xs font-bold text-gray-900">{source.value}</span>
+                  <span className="text-sm font-bold text-gray-900">{source.value}</span>
                 </div>
               ))}
             </div>

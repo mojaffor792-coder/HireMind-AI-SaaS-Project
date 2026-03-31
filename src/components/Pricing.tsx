@@ -14,144 +14,7 @@ import {
 } from 'lucide-react';
 import { useApp, PlanLevel } from '../context/AppContext';
 import { cn } from '../lib/utils';
-
-interface Plan {
-  id: PlanLevel;
-  name: string;
-  price: number;
-  description: string;
-  icon: any;
-  features: string[];
-  lockedFeatures: string[];
-  highlight?: boolean;
-  badge?: string;
-  color: string;
-  gradient: string;
-}
-
-const PLANS: Plan[] = [
-  {
-    id: 'FREE',
-    name: 'Free',
-    price: 0,
-    description: 'Perfect for trying out HireMind AI',
-    icon: Info,
-    color: 'slate',
-    gradient: 'from-slate-400 to-slate-500',
-    features: [
-      '10 Resumes / month',
-      'Basic Resume Parsing',
-      'Basic Dashboard',
-      'Candidate Database',
-    ],
-    lockedFeatures: [
-      'AI Resume Analysis',
-      'Semantic AI Matching',
-      'Hiring Prediction AI',
-      'Resume Fraud Detection',
-      'JD Generator',
-      'Advanced Analytics'
-    ]
-  },
-  {
-    id: 'STARTER',
-    name: 'Starter',
-    price: 19,
-    description: 'For small teams starting to scale',
-    icon: Zap,
-    color: 'blue',
-    gradient: 'from-blue-500 to-blue-600',
-    features: [
-      '100 Resumes / month',
-      'AI Resume Analysis',
-      'Candidate Ranking',
-      'Auto Shortlisting',
-      'Email Automation',
-      'Interview Management',
-    ],
-    lockedFeatures: [
-      'Semantic AI Matching',
-      'Smart Auto Shortlisting',
-      'Hiring Prediction AI',
-      'Resume Fraud Detection',
-      'JD Generator',
-      'Advanced Analytics'
-    ]
-  },
-  {
-    id: 'GROWTH',
-    name: 'Growth',
-    price: 49,
-    description: 'Our most popular plan for growing companies',
-    icon: Star,
-    color: 'purple',
-    gradient: 'from-purple-500 to-indigo-600',
-    highlight: true,
-    badge: 'Most Popular',
-    features: [
-      '1,000 Resumes / month',
-      'Semantic AI Matching',
-      'Advanced Candidate Ranking',
-      'Smart Auto Shortlisting',
-      'Email Automation',
-      'Interview Tracking',
-      'Advanced Analytics',
-      'AI JD Generator'
-    ],
-    lockedFeatures: [
-      'Hiring Prediction AI',
-      'Resume Fraud Detection',
-      'Candidate Risk Indicators',
-      'API Access',
-      'White-label Branding'
-    ]
-  },
-  {
-    id: 'PRO',
-    name: 'Pro',
-    price: 79,
-    description: 'Advanced AI features for power users',
-    icon: Shield,
-    color: 'orange',
-    gradient: 'from-orange-500 to-amber-600',
-    features: [
-      '5,000 Resumes / month',
-      'Hiring Prediction AI',
-      'Resume Fraud Detection',
-      'Advanced Matching',
-      'Predictive Dashboard',
-      'Custom Email Automation',
-      'Candidate Risk Indicators'
-    ],
-    lockedFeatures: [
-      'Custom AI Scoring Rules',
-      'Team Management',
-      'API Access',
-      'White-label Branding'
-    ]
-  },
-  {
-    id: 'ENTERPRISE',
-    name: 'Enterprise',
-    price: 149,
-    description: 'Full platform access for large organizations',
-    icon: Building2,
-    color: 'rose',
-    gradient: 'from-rose-800 to-red-950',
-    features: [
-      'Unlimited Resumes',
-      'Full Semantic AI Matching',
-      'Hiring Prediction AI',
-      'Resume Fraud Detection',
-      'AI JD Generator',
-      'Custom AI Scoring Rules',
-      'Team Management',
-      'API Access',
-      'White-label Branding'
-    ],
-    lockedFeatures: []
-  }
-];
+import { PLANS, Plan } from '../constants/plans';
 
 const COMPARISON_FEATURES = [
   { name: 'Resume Upload Limit', free: '10/mo', starter: '100/mo', growth: '1,000/mo', pro: '5,000/mo', enterprise: 'Unlimited' },
@@ -172,6 +35,7 @@ interface PricingProps {
 
 export const Pricing = memo<PricingProps>(({ highlightedPlan, onSelect, onBack }) => {
   const { user, upgradePlan } = useApp();
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
   const planRefs = React.useRef<Record<string, HTMLDivElement | null>>({});
 
   useEffect(() => {
@@ -180,8 +44,12 @@ export const Pricing = memo<PricingProps>(({ highlightedPlan, onSelect, onBack }
     }
   }, [highlightedPlan]);
 
-  const handleSelect = (planId: PlanLevel) => {
-    upgradePlan(planId);
+  const handleSelect = (plan: Plan) => {
+    const url = billingCycle === 'yearly' ? plan.yearlyCheckoutUrl || plan.checkoutUrl : plan.checkoutUrl;
+    if (url) {
+      window.open(url, '_blank');
+    }
+    upgradePlan(plan.id);
     onSelect();
   };
 
@@ -201,19 +69,45 @@ export const Pricing = memo<PricingProps>(({ highlightedPlan, onSelect, onBack }
       )}
 
       {/* Header */}
-      <div className="text-center space-y-6">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-xs font-bold uppercase tracking-widest animate-bounce">
-          <Rocket className="w-4 h-4" />
-          Scale Your Hiring
+      <div className="text-center space-y-8">
+        <div className="flex flex-col items-center gap-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-xs font-bold uppercase tracking-widest animate-bounce">
+            <Rocket className="w-4 h-4" />
+            Scale Your Hiring
+          </div>
+          <h1 className="text-5xl md:text-6xl font-black text-gray-900 tracking-tight leading-tight">
+            {user?.subscriptionPlan === null ? 'Choose Your Plan to Continue' : 'Simple, Transparent Pricing'}
+          </h1>
+          <p className="text-gray-500 text-xl max-w-2xl mx-auto font-medium">
+            {user?.subscriptionPlan === null 
+              ? 'Select a plan to unlock the full power of HireMind AI and access your dashboard.' 
+              : 'Choose the plan that\'s right for your hiring needs. All plans include our core AI engine.'}
+          </p>
         </div>
-        <h1 className="text-5xl font-black text-gray-900 tracking-tight leading-tight">
-          {user?.subscriptionPlan === null ? 'Choose Your Plan to Continue' : 'Simple, Transparent Pricing'}
-        </h1>
-        <p className="text-gray-500 text-xl max-w-2xl mx-auto font-medium">
-          {user?.subscriptionPlan === null 
-            ? 'Select a plan to unlock the full power of HireMind AI and access your dashboard.' 
-            : 'Choose the plan that\'s right for your hiring needs. All plans include our core AI engine.'}
-        </p>
+
+        {/* Billing Toggle */}
+        <div className="flex items-center justify-center gap-4 pt-4">
+          <span className={cn("text-sm font-bold transition-colors", billingCycle === 'monthly' ? "text-gray-900" : "text-gray-400")}>
+            Monthly
+          </span>
+          <button
+            onClick={() => setBillingCycle(prev => prev === 'monthly' ? 'yearly' : 'monthly')}
+            className="relative w-14 h-7 bg-gray-200 rounded-full p-1 transition-colors hover:bg-gray-300"
+          >
+            <motion.div
+              animate={{ x: billingCycle === 'monthly' ? 0 : 28 }}
+              className="w-5 h-5 bg-white rounded-full shadow-sm"
+            />
+          </button>
+          <div className="flex items-center gap-2">
+            <span className={cn("text-sm font-bold transition-colors", billingCycle === 'yearly' ? "text-gray-900" : "text-gray-400")}>
+              Yearly
+            </span>
+            <span className="px-2 py-0.5 bg-emerald-100 text-emerald-600 text-[10px] font-black rounded-full uppercase tracking-wider">
+              Save 20%
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* Plans Grid */}
@@ -222,6 +116,7 @@ export const Pricing = memo<PricingProps>(({ highlightedPlan, onSelect, onBack }
           const isCurrent = user?.subscriptionPlan === plan.id;
           const isHighlighted = highlightedPlan === plan.id;
           const accentColor = plan.color;
+          const currentPrice = billingCycle === 'yearly' ? plan.yearlyPrice : plan.price;
           
           // Dynamic classes for borders and shadows based on plan color
           const borderClasses = {
@@ -324,9 +219,14 @@ export const Pricing = memo<PricingProps>(({ highlightedPlan, onSelect, onBack }
 
               <div className="mb-8">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-black text-gray-900 tracking-tighter">${plan.price}</span>
+                  <span className="text-4xl font-black text-gray-900 tracking-tighter">${currentPrice}</span>
                   <span className="text-gray-400 text-base font-bold">/mo</span>
                 </div>
+                {billingCycle === 'yearly' && plan.price > 0 && (
+                  <p className="text-[10px] text-emerald-600 font-black uppercase tracking-wider mt-1">
+                    Billed annually (${currentPrice! * 12}/yr)
+                  </p>
+                )}
               </div>
 
               {/* Features Section */}
@@ -374,7 +274,7 @@ export const Pricing = memo<PricingProps>(({ highlightedPlan, onSelect, onBack }
               </div>
 
               <button
-                onClick={() => handleSelect(plan.id)}
+                onClick={() => handleSelect(plan)}
                 disabled={isCurrent}
                 className={cn(
                   "w-full py-4 rounded-2xl text-sm font-black transition-all duration-300 active:scale-[0.98] shadow-lg hover:shadow-2xl",

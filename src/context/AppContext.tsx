@@ -1,4 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, User as FirebaseUser } from 'firebase/auth';
+import { doc, getDoc, setDoc, onSnapshot, getDocFromServer } from 'firebase/firestore';
+import { auth, db } from '../firebase';
 import { Candidate, JobDescription } from '../services/gemini';
 
 export type PlanLevel = 'FREE' | 'STARTER' | 'GROWTH' | 'PRO' | 'ENTERPRISE';
@@ -11,34 +14,6 @@ export const PLAN_RANK: Record<PlanLevel, number> = {
   'ENTERPRISE': 4
 };
 
-export const FEATURE_PLANS: Record<string, PlanLevel> = {
-  'dashboard': 'FREE',
-  'semantic-match': 'GROWTH',
-  'prediction': 'PRO',
-  'fraud-detection': 'PRO',
-  'jd-generator': 'GROWTH',
-  'upload': 'FREE',
-  'candidates': 'FREE',
-  'jobs': 'STARTER',
-  'shortlisted': 'STARTER',
-  'interviews': 'STARTER',
-  'analytics': 'GROWTH',
-  'settings': 'FREE',
-  'candidate-ranking': 'STARTER',
-  'email-automation': 'STARTER',
-};
-
-interface User {
-  name: string;
-  email: string;
-  company: string;
-  subscriptionPlan: PlanLevel | null;
-  planLevel: number;
-  usage: {
-    resumesUploaded: number;
-  };
-}
-
 export const PLAN_LIMITS: Record<PlanLevel, number> = {
   'FREE': 10,
   'STARTER': 100,
@@ -46,6 +21,77 @@ export const PLAN_LIMITS: Record<PlanLevel, number> = {
   'PRO': 5000,
   'ENTERPRISE': Infinity
 };
+
+export const FEATURE_PLANS: Record<string, PlanLevel> = {
+  'dashboard': 'FREE',
+  'upload': 'FREE',
+  'candidates': 'FREE',
+  'jobs': 'FREE',
+  'basic-parsing': 'FREE',
+  'ai-analysis': 'STARTER',
+  'candidate-ranking': 'STARTER',
+  'email-automation': 'STARTER',
+  'shortlisted': 'STARTER',
+  'semantic-match': 'GROWTH',
+  'advanced-ranking': 'GROWTH',
+  'interviews': 'GROWTH',
+  'jd-generator': 'GROWTH',
+  'fraud-detection': 'PRO',
+  'prediction': 'PRO',
+  'analytics': 'PRO',
+  'api-access': 'ENTERPRISE',
+  'white-label': 'ENTERPRISE',
+  'settings': 'FREE',
+};
+
+interface User {
+  uid: string;
+  name: string;
+  email: string;
+  company: string;
+  user_plan: PlanLevel;
+  planLevel: number;
+  usage: {
+    resumesUploaded: number;
+  };
+}
+
+enum OperationType {
+  CREATE = 'create',
+  UPDATE = 'update',
+  DELETE = 'delete',
+  LIST = 'list',
+  GET = 'get',
+  WRITE = 'write',
+}
+
+interface FirestoreErrorInfo {
+  error: string;
+  operationType: OperationType;
+  path: string | null;
+  authInfo: {
+    userId: string | undefined;
+    email: string | null | undefined;
+    emailVerified: boolean | undefined;
+    isAnonymous: boolean | undefined;
+  }
+}
+
+function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
+  const errInfo: FirestoreErrorInfo = {
+    error: error instanceof Error ? error.message : String(error),
+    authInfo: {
+      userId: auth.currentUser?.uid,
+      email: auth.currentUser?.email,
+      emailVerified: auth.currentUser?.emailVerified,
+      isAnonymous: auth.currentUser?.isAnonymous,
+    },
+    operationType,
+    path
+  };
+  console.error('Firestore Error: ', JSON.stringify(errInfo));
+  throw new Error(JSON.stringify(errInfo));
+}
 
 interface AppContextType {
   candidates: Candidate[];
@@ -57,7 +103,11 @@ interface AppContextType {
   user: User | null;
   setUser: (user: User | null) => void;
   hasAccess: (featureId: string) => boolean;
-  upgradePlan: (plan: PlanLevel) => void;
+  upgradePlan: (plan: PlanLevel) => Promise<void>;
+  login: () => Promise<void>;
+  logout: () => Promise<void>;
+  loading: boolean;
+  isAuthReady: boolean;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -67,24 +117,110 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [jobDescriptions, setJobDescriptions] = useState<JobDescription[]>([]);
   const [activeJobId, setActiveJobId] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [isAuthReady, setIsAuthReady] = useState(false);
+
+  useEffect(() => {
+    const testConnection = async () => {
+      try {
+        await getDocFromServer(doc(db, 'test', 'connection'));
+      } catch (error) {
+        if (error instanceof Error && error.message.includes('the client is offline')) {
+          console.error("Please check your Firebase configuration.");
+        }
+      }
+    };
+    testConnection();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        const userDocRef = doc(db, 'users', firebaseUser.uid);
+        
+        // Listen for real-time updates to the user document
+        const unsubDoc = onSnapshot(userDocRef, (docSnap) => {
+          if (docSnap.exists()) {
+            const userData = docSnap.data() as any;
+            setUser({
+              uid: firebaseUser.uid,
+              name: userData.name || firebaseUser.displayName || 'User',
+              email: userData.email || firebaseUser.email || '',
+              company: userData.company || '',
+              user_plan: userData.user_plan || 'FREE',
+              planLevel: PLAN_RANK[userData.user_plan as PlanLevel] || 0,
+              usage: userData.usage || { resumesUploaded: 0 }
+            });
+          } else {
+            // Create default user document if it doesn't exist
+            const newUser: User = {
+              uid: firebaseUser.uid,
+              name: firebaseUser.displayName || 'User',
+              email: firebaseUser.email || '',
+              company: '',
+              user_plan: 'FREE',
+              planLevel: 0,
+              usage: { resumesUploaded: 0 }
+            };
+            setDoc(userDocRef, newUser).catch(err => handleFirestoreError(err, OperationType.WRITE, `users/${firebaseUser.uid}`));
+            setUser(newUser);
+          }
+          setLoading(false);
+          setIsAuthReady(true);
+        }, (error) => {
+          handleFirestoreError(error, OperationType.GET, `users/${firebaseUser.uid}`);
+        });
+
+        return () => unsubDoc();
+      } else {
+        setUser(null);
+        setLoading(false);
+        setIsAuthReady(true);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const login = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (error) {
+      console.error('Login error:', error);
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await auth.signOut();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
 
   const hasAccess = (featureId: string) => {
-    if (!user || user.subscriptionPlan === null) return false;
+    if (!user) return false;
     const requiredPlan = FEATURE_PLANS[featureId] || 'FREE';
     return user.planLevel >= PLAN_RANK[requiredPlan];
   };
 
-  const upgradePlan = (plan: PlanLevel) => {
+  const upgradePlan = async (plan: PlanLevel) => {
     if (user) {
-      setUser({ 
-        ...user, 
-        subscriptionPlan: plan,
-        planLevel: PLAN_RANK[plan]
-      });
+      const userDocRef = doc(db, 'users', user.uid);
+      try {
+        await setDoc(userDocRef, {
+          ...user,
+          user_plan: plan,
+          planLevel: PLAN_RANK[plan]
+        }, { merge: true });
+      } catch (error) {
+        handleFirestoreError(error, OperationType.WRITE, `users/${user.uid}`);
+      }
     }
   };
 
-  // Mock initial data
+  // Mock initial data for candidates and jobs
   useEffect(() => {
     setCandidates([
       {
@@ -162,17 +298,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         minScore: 80
       }
     ]);
-
-    setUser({
-      name: 'Mojaffor Hossain',
-      email: 'mojaffor792@gmail.com',
-      company: 'HireMind AI',
-      subscriptionPlan: null,
-      planLevel: -1,
-      usage: {
-        resumesUploaded: 3
-      }
-    });
   }, []);
 
   return (
@@ -182,7 +307,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       activeJobId, setActiveJobId,
       user, setUser,
       hasAccess,
-      upgradePlan
+      upgradePlan,
+      login,
+      logout,
+      loading,
+      isAuthReady
     }}>
       {children}
     </AppContext.Provider>

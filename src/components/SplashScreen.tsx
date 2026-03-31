@@ -3,8 +3,11 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, Shield, Zap, Users, CheckCircle2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Logo } from './Logo';
+import { useNavigate } from 'react-router-dom';
 
 export const SplashScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
+  const navigate = useNavigate();
+
   return (
     <div className="fixed inset-0 bg-[#FDFDFF] flex flex-col items-center justify-center z-50 overflow-hidden font-sans">
       {/* Premium Background Animation: Soft Glowing Circles */}
@@ -88,7 +91,10 @@ export const SplashScreen: React.FC<{ onComplete: () => void }> = ({ onComplete 
           className="flex flex-col sm:flex-row items-center gap-4 mb-16"
         >
           <button
-            onClick={onComplete}
+            onClick={() => {
+              onComplete();
+              navigate('/dashboard');
+            }}
             className="group relative px-8 py-4 bg-gradient-to-r from-[#6C63FF] via-[#4F46E5] to-[#2563EB] text-white font-bold rounded-2xl shadow-[0_15px_30px_rgba(79,70,229,0.3)] hover:shadow-[0_20px_40px_rgba(79,70,229,0.4)] transition-all hover:scale-105 active:scale-95 flex items-center gap-3 overflow-hidden"
           >
             {/* Button Glow Effect */}
@@ -98,7 +104,7 @@ export const SplashScreen: React.FC<{ onComplete: () => void }> = ({ onComplete 
           </button>
 
           <button
-            onClick={onComplete} // Both lead to auth for now as per flow
+            onClick={() => navigate('/pricing')}
             className="px-8 py-4 bg-white border border-gray-200 text-gray-600 font-bold rounded-2xl hover:bg-gray-50 hover:border-gray-300 transition-all hover:scale-105 active:scale-95 shadow-sm"
           >
             View Pricing
@@ -107,7 +113,10 @@ export const SplashScreen: React.FC<{ onComplete: () => void }> = ({ onComplete 
 
         {/* Skip Button */}
         <button 
-          onClick={onComplete}
+          onClick={() => {
+            onComplete();
+            navigate('/dashboard');
+          }}
           className="absolute top-8 right-8 text-xs font-bold text-gray-400 hover:text-gray-600 uppercase tracking-widest transition-colors"
         >
           Skip Intro

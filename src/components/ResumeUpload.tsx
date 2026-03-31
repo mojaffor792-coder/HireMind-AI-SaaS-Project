@@ -112,19 +112,19 @@ export const ResumeUpload: React.FC = () => {
           <Sparkles className="w-3 h-3" />
           AI-Powered Screening
         </div>
-        <h1 className="text-3xl font-black text-gray-900 tracking-tight">Upload Resumes</h1>
-        <p className="text-gray-500 max-w-2xl mx-auto text-lg leading-relaxed">
+        <h1 className="text-4xl font-display font-bold text-gray-900 tracking-tight">Upload Resumes</h1>
+        <p className="text-gray-500 max-w-2xl mx-auto text-lg leading-relaxed font-medium">
           Our advanced AI analyzes skills, experience, and cultural fit in seconds. 
           <br className="hidden md:block" />
           Upload PDF or DOCX files to get started.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Column: JD and Upload */}
         <div className="lg:col-span-7 space-y-6">
           {/* Target Job Description Card */}
-          <div className="bg-white border border-gray-100 rounded-[32px] p-6 shadow-sm">
+          <div className="glass-card rounded-[32px] p-6 premium-shadow border border-white/40">
             <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4 block">
               Target Job Description (Optional)
             </label>
@@ -132,7 +132,7 @@ export const ResumeUpload: React.FC = () => {
               value={jobDescription}
               onChange={(e) => setJobDescription(e.target.value)}
               placeholder="Paste the job requirements here for better matching accuracy..."
-              className="w-full h-32 bg-gray-50 border border-gray-100 rounded-2xl p-4 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all resize-none placeholder:text-gray-300"
+              className="w-full h-32 bg-gray-50/50 border border-gray-100 rounded-2xl p-4 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all resize-none placeholder:text-gray-300 font-medium leading-relaxed"
             />
           </div>
 
@@ -145,21 +145,21 @@ export const ResumeUpload: React.FC = () => {
               "relative border-2 border-dashed rounded-[32px] p-10 transition-all flex flex-col items-center justify-center min-h-[340px] group",
               isDragging 
                 ? "border-blue-500 bg-blue-50/50" 
-                : "border-gray-100 bg-white hover:bg-gray-50/50 hover:border-gray-200 shadow-sm"
+                : "glass-card border-gray-200/50 hover:bg-white/90 hover:border-blue-200/50 premium-shadow"
             )}
           >
-            <div className="w-20 h-20 bg-blue-50 rounded-[24px] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-500">
+            <div className="w-20 h-20 bg-blue-50 rounded-[24px] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-sm border border-white">
               <UploadCloud className="w-10 h-10 text-blue-600" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">Drag & drop resumes</h3>
-            <p className="text-gray-400 text-sm mb-6">Support for PDF and DOCX up to 10MB each</p>
+            <h3 className="text-2xl font-display font-bold text-gray-900 mb-2">Drag & drop resumes</h3>
+            <p className="text-gray-400 text-sm mb-8 font-medium">Support for PDF and DOCX up to 10MB each</p>
             
             <div className="flex flex-wrap justify-center gap-3">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-50 border border-gray-100 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/50 backdrop-blur-sm border border-gray-100 text-[10px] font-bold text-gray-500 uppercase tracking-wider shadow-sm">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
                 Secure Processing
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-50 border border-gray-100 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/50 backdrop-blur-sm border border-gray-100 text-[10px] font-bold text-gray-500 uppercase tracking-wider shadow-sm">
                 <Cpu className="w-3.5 h-3.5 text-blue-500" />
                 Gemini 1.5 Pro
               </div>
@@ -185,36 +185,38 @@ export const ResumeUpload: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
-                className="bg-white border border-gray-100 rounded-[32px] p-6 shadow-xl shadow-blue-500/5"
+                className="glass-card rounded-[32px] p-8 premium-shadow border border-white/40"
               >
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                    <FileText className="w-5 h-5 text-blue-600" />
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-display font-bold text-gray-900 flex items-center gap-3">
+                    <div className="p-2 bg-blue-50 rounded-xl">
+                      <FileText className="w-5 h-5 text-blue-600" />
+                    </div>
                     Selected Files ({files.length})
                   </h3>
                   <button 
                     onClick={() => setFiles([])}
-                    className="text-[10px] font-bold text-red-500 uppercase tracking-widest hover:underline"
+                    className="text-[10px] font-bold text-red-500 uppercase tracking-widest hover:text-red-600 transition-colors"
                   >
                     Clear All
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
                   {files.map((file, idx) => (
-                    <div key={idx} className="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-2xl p-4 group hover:border-blue-200 transition-all">
+                    <div key={idx} className="flex items-center justify-between bg-gray-50/50 border border-gray-100 rounded-2xl p-4 group hover:border-blue-200 transition-all">
                       <div className="flex items-center gap-3 overflow-hidden">
-                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center flex-shrink-0 border border-gray-100">
+                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center flex-shrink-0 border border-gray-100 shadow-sm">
                           <FileText className="w-5 h-5 text-blue-600" />
                         </div>
                         <div className="min-w-0">
                           <p className="text-sm font-bold text-gray-900 truncate">{file.name}</p>
-                          <p className="text-[10px] text-gray-400 font-medium">{(file.size / 1024).toFixed(1)} KB</p>
+                          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">{(file.size / 1024).toFixed(1)} KB</p>
                         </div>
                       </div>
                       <button 
                         onClick={() => removeFile(idx)}
-                        className="p-2 hover:bg-red-50 text-gray-300 hover:text-red-500 rounded-xl transition-all"
+                        className="p-2 hover:bg-red-50 text-gray-300 hover:text-red-500 rounded-xl transition-all active:scale-90"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -247,9 +249,10 @@ export const ResumeUpload: React.FC = () => {
         {/* Right Column: Info Cards */}
         <div className="lg:col-span-5 space-y-6">
           {/* How it works Card */}
-          <div className="bg-[#151619] rounded-[32px] p-8 text-white shadow-2xl">
-            <h3 className="text-xl font-bold mb-6">How it works</h3>
-            <div className="space-y-8">
+          <div className="bg-[#151619] rounded-[32px] p-8 text-white shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 blur-[80px] rounded-full -mr-32 -mt-32" />
+            <h3 className="text-xl font-display font-bold mb-8 relative z-10">How it works</h3>
+            <div className="space-y-8 relative z-10">
               {[
                 { 
                   icon: UploadCloud, 
@@ -270,13 +273,13 @@ export const ResumeUpload: React.FC = () => {
                   color: 'bg-emerald-500/20 text-emerald-400'
                 }
               ].map((step, i) => (
-                <div key={i} className="flex gap-6">
-                  <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0", step.color)}>
+                <div key={i} className="flex gap-6 group">
+                  <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110 duration-300", step.color)}>
                     <step.icon className="w-6 h-6" />
                   </div>
                   <div>
                     <h4 className="font-bold text-lg mb-1">{step.title}</h4>
-                    <p className="text-gray-400 text-sm leading-relaxed">{step.desc}</p>
+                    <p className="text-gray-400 text-sm leading-relaxed font-medium">{step.desc}</p>
                   </div>
                 </div>
               ))}
@@ -284,14 +287,14 @@ export const ResumeUpload: React.FC = () => {
           </div>
 
           {/* AI Insights Card */}
-          <div className="bg-white border border-gray-100 rounded-[32px] p-8 shadow-sm relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150 duration-700" />
+          <div className="glass-card rounded-[32px] p-8 premium-shadow relative overflow-hidden group border border-white/40">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150 duration-700" />
             
-            <div className="relative">
-              <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mb-4">
+            <div className="relative z-10">
+              <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 border border-white shadow-sm">
                 <Sparkles className="w-6 h-6 text-blue-600" />
               </div>
-              <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">AI Insights</h3>
+              <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-4">AI Insights</h3>
               <p className="text-gray-600 text-sm leading-relaxed font-medium">
                 HireMind AI doesn't just look for keywords. It understands context, seniority, and project impact to give you a true representation of candidate potential.
               </p>
@@ -299,19 +302,19 @@ export const ResumeUpload: React.FC = () => {
           </div>
 
           {/* Plan Usage Card */}
-          <div className="bg-white border border-gray-100 rounded-[32px] p-8 shadow-sm">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Monthly Usage</h3>
-              <span className="text-xs font-bold text-blue-600 px-2 py-1 bg-blue-50 rounded-lg border border-blue-100 uppercase tracking-wider">
+          <div className="glass-card rounded-[32px] p-8 premium-shadow border border-white/40">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Monthly Usage</h3>
+              <span className="text-[10px] font-bold text-blue-600 px-3 py-1 bg-blue-50 rounded-full border border-blue-100 uppercase tracking-widest">
                 {user?.subscriptionPlan} Plan
               </span>
             </div>
             
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div className="flex items-end justify-between">
                 <div>
-                  <p className="text-2xl font-black text-gray-900">{currentUsage}</p>
-                  <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">Resumes Uploaded</p>
+                  <p className="text-3xl font-display font-bold text-gray-900">{currentUsage}</p>
+                  <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Resumes Uploaded</p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-bold text-gray-900">{limit === Infinity ? '∞' : limit}</p>
@@ -319,19 +322,19 @@ export const ResumeUpload: React.FC = () => {
                 </div>
               </div>
 
-              <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+              <div className="h-2.5 w-full bg-gray-100 rounded-full overflow-hidden shadow-inner">
                 <motion.div 
                   initial={{ width: 0 }}
                   animate={{ width: `${Math.min((currentUsage / (limit || 1)) * 100, 100)}%` }}
                   className={cn(
-                    "h-full transition-all duration-1000",
+                    "h-full transition-all duration-1000 shadow-sm",
                     currentUsage >= limit ? "bg-red-500" : "bg-blue-600"
                   )}
                 />
               </div>
 
               {currentUsage >= limit && (
-                <p className="text-[10px] text-red-500 font-bold text-center uppercase tracking-widest">
+                <p className="text-[10px] text-red-500 font-bold text-center uppercase tracking-widest animate-pulse">
                   Limit reached! Upgrade to upload more.
                 </p>
               )}

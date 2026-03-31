@@ -30,6 +30,7 @@ export const CandidateDatabase: React.FC<{ filterStatus?: string; onLockedClick?
 
   const canRank = hasAccess('candidate-ranking');
   const canEmail = hasAccess('email-automation');
+  const canSeeAnalysis = hasAccess('ai-analysis');
 
   const rankCandidates = () => {
     if (!canRank) {
@@ -228,36 +229,59 @@ export const CandidateDatabase: React.FC<{ filterStatus?: string; onLockedClick?
 
                 <div className="space-y-5 mb-6">
                   <div>
-                    <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-2">AI Analysis</h4>
-                    <div className="space-y-2">
-                      <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-2.5">
-                        <p className="text-[10px] font-bold text-emerald-600 uppercase mb-2">Strengths</p>
-                        <ul className="space-y-1">
-                          {selectedCandidate.analysis.strengths.map((s, i) => (
-                            <li key={i} className="text-xs text-emerald-700 flex items-start gap-2">
-                              <CheckCircle2 className="w-3 h-3 mt-0.5" /> {s}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div className="bg-red-50 border border-red-100 rounded-xl p-2.5">
-                        <p className="text-[10px] font-bold text-red-600 uppercase mb-2">Weaknesses</p>
-                        <ul className="space-y-1">
-                          {selectedCandidate.analysis.weaknesses.map((w, i) => (
-                            <li key={i} className="text-xs text-red-700 flex items-start gap-2">
-                              <XCircle className="w-3 h-3 mt-0.5" /> {w}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest">AI Analysis</h4>
+                      {!canSeeAnalysis && <Lock className="w-3 h-3 text-gray-400" />}
                     </div>
+                    {canSeeAnalysis ? (
+                      <div className="space-y-2">
+                        <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-2.5">
+                          <p className="text-[10px] font-bold text-emerald-600 uppercase mb-2">Strengths</p>
+                          <ul className="space-y-1">
+                            {selectedCandidate.analysis.strengths.map((s, i) => (
+                              <li key={i} className="text-xs text-emerald-700 flex items-start gap-2">
+                                <CheckCircle2 className="w-3 h-3 mt-0.5" /> {s}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="bg-red-50 border border-red-100 rounded-xl p-2.5">
+                          <p className="text-[10px] font-bold text-red-600 uppercase mb-2">Weaknesses</p>
+                          <ul className="space-y-1">
+                            {selectedCandidate.analysis.weaknesses.map((w, i) => (
+                              <li key={i} className="text-xs text-red-700 flex items-start gap-2">
+                                <XCircle className="w-3 h-3 mt-0.5" /> {w}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    ) : (
+                      <div 
+                        onClick={() => onLockedClick?.('ai-analysis')}
+                        className="bg-gray-50 border border-gray-200 border-dashed rounded-2xl p-6 text-center cursor-pointer hover:bg-gray-100 transition-all"
+                      >
+                        <Sparkles className="w-8 h-8 text-blue-600/20 mx-auto mb-2" />
+                        <p className="text-xs font-bold text-gray-900 mb-1">AI Analysis Locked</p>
+                        <p className="text-[10px] text-gray-500">Upgrade to Starter to unlock AI-powered candidate insights.</p>
+                      </div>
+                    )}
                   </div>
 
                   <div>
-                    <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-2">Recommendation</h4>
-                    <p className="text-sm text-gray-600 leading-relaxed italic">
-                      "{selectedCandidate.analysis.recommendation}"
-                    </p>
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest">Recommendation</h4>
+                      {!canSeeAnalysis && <Lock className="w-3 h-3 text-gray-400" />}
+                    </div>
+                    {canSeeAnalysis ? (
+                      <p className="text-sm text-gray-600 leading-relaxed italic">
+                        "{selectedCandidate.analysis.recommendation}"
+                      </p>
+                    ) : (
+                      <p className="text-sm text-gray-400 italic blur-[2px] select-none">
+                        Upgrade to see AI recommendation for this candidate.
+                      </p>
+                    )}
                   </div>
 
                   {selectedCandidate.emails && selectedCandidate.emails.length > 0 && (

@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useApp, PlanLevel } from '../context/AppContext';
 import { cn } from '../lib/utils';
+import { PLANS } from '../constants/plans';
 
 interface UpgradeModalProps {
   isOpen: boolean;
@@ -37,6 +38,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, req
   };
 
   const Icon = PLAN_ICONS[requiredPlan];
+  const planInfo = PLANS.find(p => p.id === requiredPlan);
 
   return (
     <AnimatePresence>
@@ -66,10 +68,16 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, req
                 <Sparkles className="w-3 h-3" />
                 Premium Feature
               </div>
-              <h2 className="text-3xl font-black text-gray-900 tracking-tight">Unlock {featureName}</h2>
+              <h2 className="text-3xl font-black text-gray-900 tracking-tight">Upgrade Required</h2>
               <p className="text-gray-500 text-base leading-relaxed">
-                This feature is available in the <span className="font-black text-blue-600 uppercase tracking-wider">{requiredPlan}</span> plan and above. Upgrade your plan to unlock full potential.
+                This feature is available in higher plans. Upgrade your plan to unlock <span className="font-black text-blue-600 uppercase tracking-wider">{featureName}</span> and more.
               </p>
+              {planInfo && (
+                <div className="pt-2">
+                  <span className="text-2xl font-black text-gray-900">${planInfo.price}</span>
+                  <span className="text-gray-400 text-sm font-bold">/mo</span>
+                </div>
+              )}
             </div>
 
             {/* Benefits */}
@@ -101,7 +109,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, req
                 onClick={handleUpgrade}
                 className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-2xl shadow-xl shadow-blue-500/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
               >
-                Upgrade to {requiredPlan}
+                Upgrade Now →
                 <Sparkles className="w-5 h-5" />
               </button>
               <button

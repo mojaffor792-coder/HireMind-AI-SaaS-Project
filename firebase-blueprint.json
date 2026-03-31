@@ -1,0 +1,33 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile and subscription information.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "company": { "type": "string" },
+        "subscriptionPlan": { 
+          "type": "string", 
+          "enum": ["FREE", "STARTER", "GROWTH", "PRO", "ENTERPRISE"] 
+        },
+        "planLevel": { "type": "integer" },
+        "usage": {
+          "type": "object",
+          "properties": {
+            "resumesUploaded": { "type": "integer" }
+          }
+        }
+      },
+      "required": ["uid", "email", "subscriptionPlan", "planLevel"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile document."
+    }
+  }
+}
