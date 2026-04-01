@@ -26,7 +26,7 @@ export interface Plan {
 
 export const PLANS: Plan[] = [
   {
-    id: 'FREE',
+    id: 'Free',
     name: 'Free',
     price: 0,
     yearlyPrice: 0,
@@ -50,7 +50,7 @@ export const PLANS: Plan[] = [
     ]
   },
   {
-    id: 'STARTER',
+    id: 'Starter',
     name: 'Starter',
     price: 19,
     yearlyPrice: 15,
@@ -78,7 +78,7 @@ export const PLANS: Plan[] = [
     ]
   },
   {
-    id: 'GROWTH',
+    id: 'Growth',
     name: 'Growth',
     price: 49,
     yearlyPrice: 39,
@@ -88,8 +88,8 @@ export const PLANS: Plan[] = [
     gradient: 'from-purple-500 to-indigo-600',
     highlight: true,
     badge: 'Most Popular',
-    checkoutUrl: 'https://samiulreshad.lemonsqueezy.com/checkout/buy/0949aeb7-2c11-47a4-9770-e10776bb34e9',
-    yearlyCheckoutUrl: 'https://samiulreshad.lemonsqueezy.com/checkout/buy/0949aeb7-2c11-47a4-9770-e10776bb34e9',
+    checkoutUrl: 'https://samiulreshad.lemonsqueezy.com/checkout/buy/71f849d5-5115-4240-bfd4-5663c7851fae',
+    yearlyCheckoutUrl: 'https://samiulreshad.lemonsqueezy.com/checkout/buy/71f849d5-5115-4240-bfd4-5663c7851fae',
     features: [
       '1,000 Resumes / month',
       'Semantic AI Matching',
@@ -109,7 +109,7 @@ export const PLANS: Plan[] = [
     ]
   },
   {
-    id: 'PRO',
+    id: 'Pro',
     name: 'Pro',
     price: 79,
     yearlyPrice: 65,
@@ -117,8 +117,8 @@ export const PLANS: Plan[] = [
     icon: Shield,
     color: 'orange',
     gradient: 'from-orange-500 to-amber-600',
-    checkoutUrl: 'https://samiulreshad.lemonsqueezy.com/checkout/buy/be49c90a-a806-4d0e-9585-33d87c7ce875',
-    yearlyCheckoutUrl: 'https://samiulreshad.lemonsqueezy.com/checkout/buy/be49c90a-a806-4d0e-9585-33d87c7ce875',
+    checkoutUrl: 'https://samiulreshad.lemonsqueezy.com/checkout/buy/d2c73b57-ee6b-470f-879b-6b7a40ce058e',
+    yearlyCheckoutUrl: 'https://samiulreshad.lemonsqueezy.com/checkout/buy/d2c73b57-ee6b-470f-879b-6b7a40ce058e',
     features: [
       '5,000 Resumes / month',
       'Hiring Prediction AI',
@@ -136,7 +136,7 @@ export const PLANS: Plan[] = [
     ]
   },
   {
-    id: 'ENTERPRISE',
+    id: 'Enterprise',
     name: 'Enterprise',
     price: 149,
     yearlyPrice: 119,
@@ -144,8 +144,8 @@ export const PLANS: Plan[] = [
     icon: Building2,
     color: 'rose',
     gradient: 'from-rose-800 to-red-950',
-    checkoutUrl: 'https://samiulreshad.lemonsqueezy.com/checkout/buy/f19b6b12-4c8b-4796-8eb0-297656191edf',
-    yearlyCheckoutUrl: 'https://samiulreshad.lemonsqueezy.com/checkout/buy/f19b6b12-4c8b-4796-8eb0-297656191edf',
+    checkoutUrl: 'https://samiulreshad.lemonsqueezy.com/checkout/buy/3d694d25-6260-499b-b3af-27d534286d54',
+    yearlyCheckoutUrl: 'https://samiulreshad.lemonsqueezy.com/checkout/buy/3d694d25-6260-499b-b3af-27d534286d54',
     features: [
       'Unlimited Resumes',
       'Full Semantic AI Matching',

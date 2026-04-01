@@ -4,44 +4,44 @@ import { doc, getDoc, setDoc, onSnapshot, getDocFromServer } from 'firebase/fire
 import { auth, db } from '../firebase';
 import { Candidate, JobDescription } from '../services/gemini';
 
-export type PlanLevel = 'FREE' | 'STARTER' | 'GROWTH' | 'PRO' | 'ENTERPRISE';
+export type PlanLevel = 'Free' | 'Starter' | 'Growth' | 'Pro' | 'Enterprise';
 
 export const PLAN_RANK: Record<PlanLevel, number> = {
-  'FREE': 0,
-  'STARTER': 1,
-  'GROWTH': 2,
-  'PRO': 3,
-  'ENTERPRISE': 4
+  'Free': 0,
+  'Starter': 1,
+  'Growth': 2,
+  'Pro': 3,
+  'Enterprise': 4
 };
 
 export const PLAN_LIMITS: Record<PlanLevel, number> = {
-  'FREE': 10,
-  'STARTER': 100,
-  'GROWTH': 1000,
-  'PRO': 5000,
-  'ENTERPRISE': Infinity
+  'Free': 10,
+  'Starter': 100,
+  'Growth': 1000,
+  'Pro': 5000,
+  'Enterprise': Infinity
 };
 
 export const FEATURE_PLANS: Record<string, PlanLevel> = {
-  'dashboard': 'FREE',
-  'upload': 'FREE',
-  'candidates': 'FREE',
-  'jobs': 'FREE',
-  'basic-parsing': 'FREE',
-  'ai-analysis': 'STARTER',
-  'candidate-ranking': 'STARTER',
-  'email-automation': 'STARTER',
-  'shortlisted': 'STARTER',
-  'semantic-match': 'GROWTH',
-  'advanced-ranking': 'GROWTH',
-  'interviews': 'GROWTH',
-  'jd-generator': 'GROWTH',
-  'fraud-detection': 'PRO',
-  'prediction': 'PRO',
-  'analytics': 'PRO',
-  'api-access': 'ENTERPRISE',
-  'white-label': 'ENTERPRISE',
-  'settings': 'FREE',
+  'dashboard': 'Free',
+  'upload': 'Free',
+  'candidates': 'Free',
+  'jobs': 'Free',
+  'basic-parsing': 'Free',
+  'ai-analysis': 'Starter',
+  'candidate-ranking': 'Starter',
+  'email-automation': 'Starter',
+  'shortlisted': 'Starter',
+  'semantic-match': 'Growth',
+  'advanced-ranking': 'Growth',
+  'interviews': 'Growth',
+  'jd-generator': 'Growth',
+  'fraud-detection': 'Pro',
+  'prediction': 'Pro',
+  'analytics': 'Pro',
+  'api-access': 'Enterprise',
+  'white-label': 'Enterprise',
+  'settings': 'Free',
 };
 
 interface User {
@@ -147,7 +147,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               name: userData.name || firebaseUser.displayName || 'User',
               email: userData.email || firebaseUser.email || '',
               company: userData.company || '',
-              user_plan: userData.user_plan || 'FREE',
+              user_plan: userData.user_plan || 'Free',
               planLevel: PLAN_RANK[userData.user_plan as PlanLevel] || 0,
               usage: userData.usage || { resumesUploaded: 0 }
             });
@@ -158,7 +158,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               name: firebaseUser.displayName || 'User',
               email: firebaseUser.email || '',
               company: '',
-              user_plan: 'FREE',
+              user_plan: 'Free',
               planLevel: 0,
               usage: { resumesUploaded: 0 }
             };
@@ -186,7 +186,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-    } catch (error) {
+    } catch (error: any) {
+      if (error.code === 'auth/cancelled-popup-request') {
+        console.log('Login popup request was cancelled by a newer request.');
+        return;
+      }
+      if (error.code === 'auth/popup-closed-by-user') {
+        console.log('Login popup was closed by the user.');
+        return;
+      }
       console.error('Login error:', error);
     }
   };
@@ -200,8 +208,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const hasAccess = (featureId: string) => {
+    const requiredPlan = FEATURE_PLANS[featureId] || 'Free';
+    if (requiredPlan === 'Free') return true;
     if (!user) return false;
-    const requiredPlan = FEATURE_PLANS[featureId] || 'FREE';
     return user.planLevel >= PLAN_RANK[requiredPlan];
   };
 

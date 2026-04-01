@@ -13,7 +13,6 @@ import {
   Sparkles,
   ShieldAlert,
   Wand2,
-  Lock,
   CreditCard
 } from 'lucide-react';
 import { cn } from '../lib/utils';
@@ -96,7 +95,9 @@ export const Sidebar = memo<SidebarProps>(({ activeTab, setActiveTab, onLockedCl
                   <span className="flex-1 text-left">{item.label}</span>
                   
                   {!allowed && (
-                    <Lock className="w-3 h-3 text-gray-300" />
+                    <span className="text-[8px] font-black bg-gray-100 text-gray-400 px-1.5 py-0.5 rounded-md uppercase tracking-widest group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
+                      Pro
+                    </span>
                   )}
                   
                   {active && (
@@ -112,18 +113,6 @@ export const Sidebar = memo<SidebarProps>(({ activeTab, setActiveTab, onLockedCl
         ))}
       </nav>
 
-      <div className="p-4 border-t border-gray-100/50">
-        <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-4 relative overflow-hidden group cursor-pointer">
-          <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-            <Sparkles className="w-12 h-12 text-white" />
-          </div>
-          <p className="text-xs font-bold text-blue-400 uppercase tracking-widest">Pro Plan</p>
-          <p className="text-sm font-bold text-white mt-1">Unlock AI Features</p>
-          <button className="w-full mt-3 py-2 bg-white text-gray-900 text-xs font-bold rounded-lg hover:bg-blue-50 transition-colors">
-            Upgrade Now
-          </button>
-        </div>
-      </div>
     </div>
   );
 });

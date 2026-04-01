@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
-  Lock, 
   X, 
   Sparkles, 
   Check, 
@@ -23,11 +22,11 @@ interface UpgradeModalProps {
 }
 
 const PLAN_ICONS: Record<PlanLevel, any> = {
-  'FREE': Lock,
-  'STARTER': Zap,
-  'GROWTH': Star,
-  'PRO': Shield,
-  'ENTERPRISE': Building2
+  'Free': Zap,
+  'Starter': Zap,
+  'Growth': Star,
+  'Pro': Shield,
+  'Enterprise': Building2
 };
 
 export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, requiredPlan, featureName, onUpgrade }) => {
@@ -65,7 +64,6 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, req
             
             <div className="space-y-2">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-[10px] font-black uppercase tracking-widest">
-                <Sparkles className="w-3 h-3" />
                 Premium Feature
               </div>
               <h2 className="text-3xl font-black text-gray-900 tracking-tight">Upgrade Required</h2>
@@ -110,7 +108,6 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, req
                 className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-2xl shadow-xl shadow-blue-500/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
               >
                 Upgrade Now →
-                <Sparkles className="w-5 h-5" />
               </button>
               <button
                 onClick={onClose}

@@ -19,7 +19,7 @@ import { useApp, FEATURE_PLANS } from '../context/AppContext';
 import { Candidate } from '../services/gemini';
 import { cn, formatDate } from '../lib/utils';
 import { EmailModal } from './EmailModal';
-import { Lock, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 export const CandidateDatabase: React.FC<{ filterStatus?: string; onLockedClick?: (id: string) => void }> = ({ filterStatus, onLockedClick }) => {
   const { candidates, setCandidates, hasAccess } = useApp();
@@ -78,17 +78,19 @@ export const CandidateDatabase: React.FC<{ filterStatus?: string; onLockedClick?
                 : "bg-gray-100 text-gray-400 hover:bg-gray-200"
             )}
           >
-            {isRanking ? (
-              <span className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 animate-pulse" />
-                Ranking...
-              </span>
-            ) : (
-              <>
-                {canRank ? <Sparkles className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
-                Rank Candidates
-              </>
-            )}
+                {isRanking ? (
+                  <span className="flex items-center gap-2">
+                    <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Ranking...
+                  </span>
+                ) : (
+                  <>
+                    {canRank ? <div className="w-3 h-3 bg-white/20 rounded-full" /> : (
+                      <span className="text-[8px] font-black bg-gray-200 text-gray-500 px-1.5 py-0.5 rounded-md uppercase tracking-widest">Pro</span>
+                    )}
+                    Rank Candidates
+                  </>
+                )}
           </button>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -201,7 +203,9 @@ export const CandidateDatabase: React.FC<{ filterStatus?: string; onLockedClick?
                           : "bg-gray-100 border-gray-200 text-gray-300 hover:bg-gray-200"
                       )}
                     >
-                      {canEmail ? <Mail className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
+                      {canEmail ? <Mail className="w-5 h-5" /> : (
+                        <span className="text-[8px] font-black bg-gray-200 text-gray-500 px-1.5 py-0.5 rounded-md uppercase tracking-widest">Pro</span>
+                      )}
                     </button>
                     <button className="p-2 bg-gray-50 border border-gray-200 rounded-xl text-gray-400 hover:text-gray-900 transition-all">
                       <Phone className="w-5 h-5" />
@@ -231,7 +235,9 @@ export const CandidateDatabase: React.FC<{ filterStatus?: string; onLockedClick?
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest">AI Analysis</h4>
-                      {!canSeeAnalysis && <Lock className="w-3 h-3 text-gray-400" />}
+                      {!canSeeAnalysis && (
+                        <span className="text-[8px] font-black bg-gray-100 text-gray-400 px-1.5 py-0.5 rounded-md uppercase tracking-widest">Pro</span>
+                      )}
                     </div>
                     {canSeeAnalysis ? (
                       <div className="space-y-2">
@@ -261,7 +267,7 @@ export const CandidateDatabase: React.FC<{ filterStatus?: string; onLockedClick?
                         onClick={() => onLockedClick?.('ai-analysis')}
                         className="bg-gray-50 border border-gray-200 border-dashed rounded-2xl p-6 text-center cursor-pointer hover:bg-gray-100 transition-all"
                       >
-                        <Sparkles className="w-8 h-8 text-blue-600/20 mx-auto mb-2" />
+                        <div className="text-[10px] font-black bg-blue-50 text-blue-600 px-3 py-1 rounded-full uppercase tracking-widest inline-block mb-3">Pro Feature</div>
                         <p className="text-xs font-bold text-gray-900 mb-1">AI Analysis Locked</p>
                         <p className="text-[10px] text-gray-500">Upgrade to Starter to unlock AI-powered candidate insights.</p>
                       </div>
@@ -271,7 +277,9 @@ export const CandidateDatabase: React.FC<{ filterStatus?: string; onLockedClick?
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest">Recommendation</h4>
-                      {!canSeeAnalysis && <Lock className="w-3 h-3 text-gray-400" />}
+                      {!canSeeAnalysis && (
+                        <span className="text-[8px] font-black bg-gray-100 text-gray-400 px-1.5 py-0.5 rounded-md uppercase tracking-widest">Pro</span>
+                      )}
                     </div>
                     {canSeeAnalysis ? (
                       <p className="text-sm text-gray-600 leading-relaxed italic">
@@ -333,7 +341,9 @@ export const CandidateDatabase: React.FC<{ filterStatus?: string; onLockedClick?
                           : "bg-gray-100 text-gray-400 hover:bg-gray-200 shadow-none"
                       )}
                     >
-                      {canEmail ? <Mail className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
+                      {canEmail ? <Mail className="w-5 h-5" /> : (
+                        <span className="text-[8px] font-black bg-gray-200 text-gray-500 px-1.5 py-0.5 rounded-md uppercase tracking-widest">Pro</span>
+                      )}
                       {canEmail ? 'Contact Candidate' : 'Upgrade to Contact'}
                     </button>
                   <div className="grid grid-cols-2 gap-3">

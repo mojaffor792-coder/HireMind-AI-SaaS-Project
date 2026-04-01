@@ -51,7 +51,9 @@ export const SemanticMatching: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-[10px] font-bold uppercase tracking-widest mb-2">
-            <Sparkles className="w-3 h-3" />
+            <div className="text-[8px] font-black bg-blue-50 text-blue-600 px-2 py-0.5 rounded-md uppercase tracking-widest border border-blue-100">
+              AI
+            </div>
             AI-Powered Matching
           </div>
           <h1 className="text-4xl font-display font-black text-gray-900 flex items-center gap-4 tracking-tight">
@@ -309,7 +311,7 @@ export const SemanticMatching: React.FC = () => {
                       <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-10 mb-16 relative z-10">
                         <div className="flex items-center gap-8">
                           <div className="w-24 h-24 rounded-[40px] bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-2xl shadow-blue-600/30 border-[6px] border-white/20">
-                            <Sparkles className="w-12 h-12" />
+                            <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 font-black text-xl">AI</div>
                           </div>
                           <div>
                             <h3 className="text-4xl font-display font-black text-gray-900 tracking-tight mb-2">AI Match Insights</h3>

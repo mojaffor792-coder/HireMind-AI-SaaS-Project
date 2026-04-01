@@ -2,7 +2,6 @@ import React, { useState, useEffect, memo } from 'react';
 import { motion } from 'motion/react';
 import { 
   Check, 
-  Lock, 
   X,
   Zap, 
   Star, 
@@ -45,11 +44,12 @@ export const Pricing = memo<PricingProps>(({ highlightedPlan, onSelect, onBack }
   }, [highlightedPlan]);
 
   const handleSelect = (plan: Plan) => {
-    const url = billingCycle === 'yearly' ? plan.yearlyCheckoutUrl || plan.checkoutUrl : plan.checkoutUrl;
-    if (url) {
-      window.open(url, '_blank');
+    const baseUrl = billingCycle === 'yearly' ? plan.yearlyCheckoutUrl || plan.checkoutUrl : plan.checkoutUrl;
+    if (baseUrl) {
+      const successUrl = `${window.location.origin}/payment-success?plan=${plan.id}`;
+      const checkoutUrl = `${baseUrl}?checkout[success_url]=${encodeURIComponent(successUrl)}`;
+      window.location.href = checkoutUrl;
     }
-    upgradePlan(plan.id);
     onSelect();
   };
 
@@ -285,7 +285,7 @@ export const Pricing = memo<PricingProps>(({ highlightedPlan, onSelect, onBack }
                       : "bg-gray-900 text-white hover:bg-black hover:scale-[1.02]"
                 )}
               >
-                {isCurrent ? 'Current Plan' : plan.id === 'FREE' ? 'Select Plan' : 'Upgrade Now'}
+                {isCurrent ? 'Current Plan' : plan.id === 'Free' ? 'Select Plan' : 'Upgrade Now'}
               </button>
             </motion.div>
           );

@@ -3,10 +3,12 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate, useSe
 import { AppProvider, useApp } from './context/AppContext';
 import { SplashScreen } from './components/SplashScreen';
 import { Sidebar } from './components/Sidebar';
-import { Bell, Search, User, Loader2, CheckCircle2 } from 'lucide-react';
+import { Bell, Search, User, Loader2, CheckCircle2, LogOut, LogIn } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { FEATURE_PLANS, PlanLevel } from './context/AppContext';
+import { cn } from './lib/utils';
 import { PaymentSuccess } from './components/PaymentSuccess';
+import { UpgradeRequired } from './components/UpgradeRequired';
 
 // Lazy load components for better performance
 const Dashboard = lazy(() => import('./components/Dashboard').then(m => ({ default: m.Dashboard })));
@@ -67,18 +69,28 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
 const AppContent: React.FC = () => {
   const [showSplash, setShowSplash] = useState(true);
-  const { user, setUser, upgradePlan, loading, hasAccess } = useApp();
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const { user, setUser, upgradePlan, loading, hasAccess, login, logout } = useApp();
   const navigate = useNavigate();
   const location = useLocation();
   const [highlightedPlan, setHighlightedPlan] = useState<PlanLevel | null>(null);
   const [upgradeModal, setUpgradeModal] = useState<{ isOpen: boolean; requiredPlan: PlanLevel; featureName: string }>({
     isOpen: false,
-    requiredPlan: 'FREE',
+    requiredPlan: 'Free',
     featureName: ''
   });
 
+  const handleLogin = async () => {
+    setIsLoggingIn(true);
+    try {
+      await login();
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
+
   const handleLockedClick = (featureId: string) => {
-    const requiredPlan = FEATURE_PLANS[featureId] || 'FREE';
+    const requiredPlan = FEATURE_PLANS[featureId] || 'Free';
     const featureName = featureId.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
     setUpgradeModal({
       isOpen: true,
@@ -96,10 +108,10 @@ const AppContent: React.FC = () => {
   const activeTab = location.pathname.substring(1) || 'dashboard';
 
   useEffect(() => {
-    if (!loading && activeTab && activeTab !== 'pricing' && activeTab !== 'payment-success' && activeTab !== 'checkout') {
+    if (!loading && activeTab && activeTab !== 'pricing' && activeTab !== 'payment-success' && activeTab !== 'checkout' && activeTab !== 'upgrade-required') {
       if (!hasAccess(activeTab)) {
         handleLockedClick(activeTab);
-        navigate('/dashboard');
+        navigate('/upgrade-required');
       }
     }
   }, [activeTab, loading, hasAccess]);
@@ -113,9 +125,9 @@ const AppContent: React.FC = () => {
   }
 
   const renderContent = () => {
-    const isPublicTab = ['pricing', 'payment-success', 'checkout', 'dashboard'].includes(activeTab);
+    const isPublicTab = ['pricing', 'payment-success', 'checkout', 'dashboard', 'upgrade-required'].includes(activeTab);
     if (!loading && !isPublicTab && !hasAccess(activeTab)) {
-      return <Navigate to="/dashboard" replace />;
+      return <Navigate to="/upgrade-required" replace />;
     }
 
     switch (activeTab) {
@@ -140,6 +152,7 @@ const AppContent: React.FC = () => {
           onBack={() => navigate(-1)}
         />
       );
+      case 'upgrade-required': return <UpgradeRequired />;
       case 'settings': return <Settings onUpgrade={() => navigate('/pricing')} onLockedClick={handleLockedClick} />;
       default: return <Dashboard />;
     }
@@ -183,13 +196,43 @@ const AppContent: React.FC = () => {
                   </button>
                   
                   <div className="flex items-center gap-3 pl-6 border-l border-gray-200">
-                    <div className="text-right">
-                      <p className="text-base font-bold text-gray-900 leading-none">{user?.name}</p>
-                      <p className="text-xs text-gray-500 font-medium mt-1 uppercase tracking-wider">{user?.company}</p>
-                    </div>
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/10">
-                      <User className="w-6 h-6 text-white" />
-                    </div>
+                    {user ? (
+                      <>
+                        <div className="text-right">
+                          <p className="text-base font-bold text-gray-900 leading-none">{user.name}</p>
+                          <p className="text-xs text-gray-500 font-medium mt-1 uppercase tracking-wider">{user.company || 'Personal'}</p>
+                        </div>
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/10">
+                          <User className="w-6 h-6 text-white" />
+                        </div>
+                        <button 
+                          onClick={logout}
+                          className="p-2 text-gray-400 hover:text-rose-500 transition-all hover:bg-rose-50 rounded-xl group relative"
+                          title="Sign Out"
+                        >
+                          <LogOut className="w-5 h-5" />
+                          <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                            Sign Out
+                          </span>
+                        </button>
+                      </>
+                    ) : (
+                      <button 
+                        onClick={handleLogin}
+                        disabled={isLoggingIn}
+                        className={cn(
+                          "flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20",
+                          isLoggingIn && "opacity-50 cursor-not-allowed"
+                        )}
+                      >
+                        {isLoggingIn ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <LogIn className="w-4 h-4" />
+                        )}
+                        {isLoggingIn ? 'Signing In...' : 'Sign In'}
+                      </button>
+                    )}
                   </div>
                 </div>
               </header>

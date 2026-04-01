@@ -109,7 +109,9 @@ export const ResumeUpload: React.FC = () => {
       {/* Header Section */}
       <div className="text-center space-y-3">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-[10px] font-bold uppercase tracking-widest">
-          <Sparkles className="w-3 h-3" />
+          <div className="text-[8px] font-black bg-blue-50 text-blue-600 px-2 py-0.5 rounded-md uppercase tracking-widest border border-blue-100">
+            AI
+          </div>
           AI-Powered Screening
         </div>
         <h1 className="text-4xl font-display font-bold text-gray-900 tracking-tight">Upload Resumes</h1>
@@ -236,7 +238,7 @@ export const ResumeUpload: React.FC = () => {
                     </>
                   ) : (
                     <>
-                      <Sparkles className="w-6 h-6" />
+                      <div className="w-6 h-6 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 font-black text-[10px]">AI</div>
                       Start AI Analysis
                     </>
                   )}
@@ -292,7 +294,7 @@ export const ResumeUpload: React.FC = () => {
             
             <div className="relative z-10">
               <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 border border-white shadow-sm">
-                <Sparkles className="w-6 h-6 text-blue-600" />
+                <div className="w-6 h-6 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 font-black text-[10px]">AI</div>
               </div>
               <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-4">AI Insights</h3>
               <p className="text-gray-600 text-sm leading-relaxed font-medium">

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Building2, Lock, Bell, Shield, Mail, Globe, Check, AlertCircle, Zap, Rocket, Code2 } from 'lucide-react';
+import { User, Building2, Sparkles, Bell, Shield, Mail, Globe, Check, AlertCircle, Zap, Rocket, Code2 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
@@ -495,7 +495,9 @@ export const Settings: React.FC<SettingsProps> = ({ onUpgrade, onLockedClick }) 
                 {item.label}
               </div>
               {!hasAccess(item.id) && (
-                <Lock className="w-3.5 h-3.5 text-gray-400 group-hover:text-gray-600" />
+                <span className="text-[8px] font-black bg-gray-100 text-gray-400 px-1.5 py-0.5 rounded-md uppercase tracking-widest group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
+                  Pro
+                </span>
               )}
             </button>
           ))}

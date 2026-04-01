@@ -95,7 +95,9 @@ export const HiringPrediction: React.FC = () => {
         <div>
           <div className="flex items-center gap-2 mb-2">
             <div className="px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-amber-500" />
+              <div className="text-[8px] font-black bg-amber-50 text-amber-600 px-2 py-0.5 rounded-md uppercase tracking-widest border border-amber-100">
+                AI
+              </div>
               <span className="text-[10px] font-black text-amber-600 uppercase tracking-wider">AI Predictive Engine</span>
             </div>
           </div>
