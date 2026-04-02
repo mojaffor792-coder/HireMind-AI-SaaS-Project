@@ -348,7 +348,7 @@ export const ResumeUpload: React.FC = () => {
       <UpgradeModal 
         isOpen={showUpgradeModal}
         onClose={() => setShowUpgradeModal(false)}
-        requiredPlan={user?.subscriptionPlan === 'FREE' ? 'STARTER' : 'GROWTH'}
+        requiredPlan={user?.subscriptionPlan === 'Free' ? 'Starter' : 'Growth'}
         featureName="Additional Resume Uploads"
       />
     </div>

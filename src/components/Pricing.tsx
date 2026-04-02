@@ -12,6 +12,7 @@ import {
   Info
 } from 'lucide-react';
 import { useApp, PlanLevel } from '../context/AppContext';
+import { useNavigate } from 'react-router-dom';
 import { cn } from '../lib/utils';
 import { PLANS, Plan } from '../constants/plans';
 
@@ -34,6 +35,7 @@ interface PricingProps {
 
 export const Pricing = memo<PricingProps>(({ highlightedPlan, onSelect, onBack }) => {
   const { user, upgradePlan } = useApp();
+  const navigate = useNavigate();
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
   const planRefs = React.useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -43,13 +45,23 @@ export const Pricing = memo<PricingProps>(({ highlightedPlan, onSelect, onBack }
     }
   }, [highlightedPlan]);
 
-  const handleSelect = (plan: Plan) => {
+  const handleSelect = async (plan: Plan) => {
+    if (!user) {
+      navigate('/auth', { state: { returnTo: '/pricing', selectedPlan: plan.id } });
+      return;
+    }
+
     const baseUrl = billingCycle === 'yearly' ? plan.yearlyCheckoutUrl || plan.checkoutUrl : plan.checkoutUrl;
+    
     if (baseUrl) {
       const successUrl = `${window.location.origin}/payment-success?plan=${plan.id}`;
       const checkoutUrl = `${baseUrl}?checkout[success_url]=${encodeURIComponent(successUrl)}`;
       window.location.href = checkoutUrl;
+      return; // Stop execution as we are redirecting
     }
+
+    // For Free plan or plans without checkout URL, just upgrade directly (mock)
+    await upgradePlan(plan.id);
     onSelect();
   };
 
@@ -76,10 +88,10 @@ export const Pricing = memo<PricingProps>(({ highlightedPlan, onSelect, onBack }
             Scale Your Hiring
           </div>
           <h1 className="text-5xl md:text-6xl font-black text-gray-900 tracking-tight leading-tight">
-            {user?.subscriptionPlan === null ? 'Choose Your Plan to Continue' : 'Simple, Transparent Pricing'}
+            {!user ? 'Choose Your Plan to Continue' : 'Simple, Transparent Pricing'}
           </h1>
           <p className="text-gray-500 text-xl max-w-2xl mx-auto font-medium">
-            {user?.subscriptionPlan === null 
+            {!user 
               ? 'Select a plan to unlock the full power of HireMind AI and access your dashboard.' 
               : 'Choose the plan that\'s right for your hiring needs. All plans include our core AI engine.'}
           </p>

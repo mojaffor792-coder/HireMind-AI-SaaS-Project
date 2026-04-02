@@ -176,13 +176,13 @@ export const Settings: React.FC<SettingsProps> = ({ onUpgrade, onLockedClick }) 
                   <div className="flex items-center justify-between">
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Resume Uploads</label>
                     <span className="text-sm font-black text-gray-900">
-                      {user?.usage.resumesUploaded} / {user?.subscriptionPlan === 'FREE' ? '10' : user?.subscriptionPlan === 'STARTER' ? '100' : user?.subscriptionPlan === 'GROWTH' ? '1,000' : user?.subscriptionPlan === 'PRO' ? '5,000' : 'Unlimited'}
+                      {user?.usage.resumesUploaded} / {user?.subscriptionPlan === 'Free' ? '10' : user?.subscriptionPlan === 'Starter' ? '100' : user?.subscriptionPlan === 'Growth' ? '1,000' : user?.subscriptionPlan === 'Pro' ? '5,000' : 'Unlimited'}
                     </span>
                   </div>
                   <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
                     <div 
                       className="h-full bg-blue-600 transition-all duration-1000" 
-                      style={{ width: `${Math.min((user?.usage.resumesUploaded || 0) / (user?.subscriptionPlan === 'FREE' ? 10 : user?.subscriptionPlan === 'STARTER' ? 100 : user?.subscriptionPlan === 'GROWTH' ? 1000 : user?.subscriptionPlan === 'PRO' ? 5000 : 1000000) * 100, 100)}%` }} 
+                      style={{ width: `${Math.min((user?.usage.resumesUploaded || 0) / (user?.subscriptionPlan === 'Free' ? 10 : user?.subscriptionPlan === 'Starter' ? 100 : user?.subscriptionPlan === 'Growth' ? 1000 : user?.subscriptionPlan === 'Pro' ? 5000 : 1000000) * 100, 100)}%` }} 
                     />
                   </div>
                   <p className="text-[10px] text-gray-400 font-medium">Your usage resets on the 1st of every month.</p>

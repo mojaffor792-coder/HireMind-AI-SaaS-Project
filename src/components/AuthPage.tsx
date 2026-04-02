@@ -16,15 +16,17 @@ import {
 } from 'lucide-react';
 import { Logo } from './Logo';
 import { useApp } from '../context/AppContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '../lib/utils';
 
 export const AuthPage: React.FC = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { signUpWithEmail, signInWithEmail, login, user } = useApp();
+  const { signUpWithEmail, signInWithEmail, login, user, upgradePlan } = useApp();
   const navigate = useNavigate();
+  const location = useLocation();
+  const state = location.state as { returnTo?: string; selectedPlan?: string } | null;
 
   // Form states
   const [name, setName] = useState('');
@@ -59,7 +61,12 @@ export const AuthPage: React.FC = () => {
       } else {
         await signInWithEmail(email, password);
       }
-      navigate('/dashboard');
+
+      if (state?.selectedPlan) {
+        await upgradePlan(state.selectedPlan as any);
+      }
+      
+      navigate(state?.returnTo || '/dashboard');
     } catch (err: any) {
       setError(err.message || 'An error occurred during authentication');
     } finally {
@@ -72,7 +79,10 @@ export const AuthPage: React.FC = () => {
     await new Promise(resolve => setTimeout(resolve, 1000));
     try {
       await login();
-      navigate('/dashboard');
+      if (state?.selectedPlan) {
+        await upgradePlan(state.selectedPlan as any);
+      }
+      navigate(state?.returnTo || '/dashboard');
     } catch (err: any) {
       setError(err.message || 'Google login failed');
     } finally {

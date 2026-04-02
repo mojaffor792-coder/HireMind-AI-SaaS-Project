@@ -46,7 +46,7 @@ interface User {
   name: string;
   email: string;
   company: string;
-  user_plan: PlanLevel;
+  subscriptionPlan: PlanLevel;
   planLevel: number;
   usage: {
     resumesUploaded: number;
@@ -99,7 +99,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       name: 'Google User',
       email: 'google@example.com',
       company: 'Google Inc.',
-      user_plan: 'Free',
+      subscriptionPlan: 'Free',
       planLevel: 0,
       usage: { resumesUploaded: 0 }
     };
@@ -114,7 +114,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       name: name,
       email: email,
       company: '',
-      user_plan: 'Free',
+      subscriptionPlan: 'Free',
       planLevel: 0,
       usage: { resumesUploaded: 0 }
     };
@@ -129,7 +129,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       name: email.split('@')[0],
       email: email,
       company: '',
-      user_plan: 'Free',
+      subscriptionPlan: 'Free',
       planLevel: 0,
       usage: { resumesUploaded: 0 }
     };
@@ -153,7 +153,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (user) {
       const updatedUser = {
         ...user,
-        user_plan: plan,
+        subscriptionPlan: plan,
         planLevel: PLAN_RANK[plan]
       };
       setUser(updatedUser);
