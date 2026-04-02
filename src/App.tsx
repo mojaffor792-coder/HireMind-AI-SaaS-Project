@@ -11,6 +11,7 @@ import { PaymentSuccess } from './components/PaymentSuccess';
 import { UpgradeRequired } from './components/UpgradeRequired';
 
 // Lazy load components for better performance
+const AuthPage = lazy(() => import('./components/AuthPage').then(m => ({ default: m.AuthPage })));
 const Dashboard = lazy(() => import('./components/Dashboard').then(m => ({ default: m.Dashboard })));
 const ResumeUpload = lazy(() => import('./components/ResumeUpload').then(m => ({ default: m.ResumeUpload })));
 const CandidateDatabase = lazy(() => import('./components/CandidateDatabase').then(m => ({ default: m.CandidateDatabase })));
@@ -70,7 +71,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 const AppContent: React.FC = () => {
   const [showSplash, setShowSplash] = useState(true);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const { user, setUser, upgradePlan, loading, hasAccess, login, logout } = useApp();
+  const { user, loading, hasAccess, login, logout } = useApp();
   const navigate = useNavigate();
   const location = useLocation();
   const [highlightedPlan, setHighlightedPlan] = useState<PlanLevel | null>(null);
@@ -108,15 +109,17 @@ const AppContent: React.FC = () => {
   const activeTab = location.pathname.substring(1) || 'dashboard';
 
   useEffect(() => {
-    if (!loading && activeTab && activeTab !== 'pricing' && activeTab !== 'payment-success' && activeTab !== 'checkout' && activeTab !== 'upgrade-required') {
-      if (!hasAccess(activeTab)) {
+    if (!loading && activeTab && !['pricing', 'payment-success', 'checkout', 'upgrade-required', 'auth'].includes(activeTab)) {
+      if (!user) {
+        navigate('/auth');
+      } else if (!hasAccess(activeTab)) {
         handleLockedClick(activeTab);
         navigate('/upgrade-required');
       }
     }
-  }, [activeTab, loading, hasAccess]);
+  }, [activeTab, loading, user, hasAccess]);
 
-  if (loading) {
+  if (loading && !showSplash) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <Loader2 className="w-12 h-12 text-blue-600 animate-spin" />
@@ -125,12 +128,13 @@ const AppContent: React.FC = () => {
   }
 
   const renderContent = () => {
-    const isPublicTab = ['pricing', 'payment-success', 'checkout', 'dashboard', 'upgrade-required'].includes(activeTab);
+    const isPublicTab = ['pricing', 'payment-success', 'checkout', 'dashboard', 'upgrade-required', 'auth'].includes(activeTab);
     if (!loading && !isPublicTab && !hasAccess(activeTab)) {
       return <Navigate to="/upgrade-required" replace />;
     }
 
     switch (activeTab) {
+      case 'auth': return <AuthPage />;
       case 'dashboard': return <Dashboard onViewAll={() => navigate('/candidates')} />;
       case 'semantic-match': return <SemanticMatching />;
       case 'prediction': return <HiringPrediction />;
@@ -158,9 +162,21 @@ const AppContent: React.FC = () => {
     }
   };
 
+  if (showSplash) {
+    return <SplashScreen onComplete={() => { 
+      setShowSplash(false); 
+      if (user) {
+        navigate('/dashboard');
+      } else {
+        navigate('/auth');
+      }
+    }} />;
+  }
+
   return (
     <Routes>
-      <Route path="/" element={showSplash ? <SplashScreen onComplete={() => { setShowSplash(false); navigate('/dashboard'); }} /> : <Navigate to="/dashboard" />} />
+      <Route path="/" element={<Navigate to="/dashboard" />} />
+      <Route path="/auth" element={<AuthPage />} />
       <Route path="/pricing" element={<div className="min-h-screen bg-gray-50 p-8"><Pricing highlightedPlan={null} onSelect={() => navigate('/dashboard')} onBack={() => navigate(-1)} /></div>} />
       <Route path="/payment-success" element={<PaymentSuccess />} />
       <Route path="/checkout" element={<ProtectedRoute><CheckoutRedirect /></ProtectedRoute>} />
@@ -218,19 +234,13 @@ const AppContent: React.FC = () => {
                       </>
                     ) : (
                       <button 
-                        onClick={handleLogin}
-                        disabled={isLoggingIn}
+                        onClick={() => navigate('/auth')}
                         className={cn(
-                          "flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20",
-                          isLoggingIn && "opacity-50 cursor-not-allowed"
+                          "flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20"
                         )}
                       >
-                        {isLoggingIn ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <LogIn className="w-4 h-4" />
-                        )}
-                        {isLoggingIn ? 'Signing In...' : 'Sign In'}
+                        <LogIn className="w-4 h-4" />
+                        Sign In
                       </button>
                     )}
                   </div>

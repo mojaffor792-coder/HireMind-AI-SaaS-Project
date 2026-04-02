@@ -1,7 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, User as FirebaseUser } from 'firebase/auth';
-import { doc, getDoc, setDoc, onSnapshot, getDocFromServer } from 'firebase/firestore';
-import { auth, db } from '../firebase';
 import { Candidate, JobDescription } from '../services/gemini';
 
 export type PlanLevel = 'Free' | 'Starter' | 'Growth' | 'Pro' | 'Enterprise';
@@ -56,43 +53,6 @@ interface User {
   };
 }
 
-enum OperationType {
-  CREATE = 'create',
-  UPDATE = 'update',
-  DELETE = 'delete',
-  LIST = 'list',
-  GET = 'get',
-  WRITE = 'write',
-}
-
-interface FirestoreErrorInfo {
-  error: string;
-  operationType: OperationType;
-  path: string | null;
-  authInfo: {
-    userId: string | undefined;
-    email: string | null | undefined;
-    emailVerified: boolean | undefined;
-    isAnonymous: boolean | undefined;
-  }
-}
-
-function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
-  const errInfo: FirestoreErrorInfo = {
-    error: error instanceof Error ? error.message : String(error),
-    authInfo: {
-      userId: auth.currentUser?.uid,
-      email: auth.currentUser?.email,
-      emailVerified: auth.currentUser?.emailVerified,
-      isAnonymous: auth.currentUser?.isAnonymous,
-    },
-    operationType,
-    path
-  };
-  console.error('Firestore Error: ', JSON.stringify(errInfo));
-  throw new Error(JSON.stringify(errInfo));
-}
-
 interface AppContextType {
   candidates: Candidate[];
   setCandidates: React.Dispatch<React.SetStateAction<Candidate[]>>;
@@ -105,6 +65,8 @@ interface AppContextType {
   hasAccess: (featureId: string) => boolean;
   upgradePlan: (plan: PlanLevel) => Promise<void>;
   login: () => Promise<void>;
+  signUpWithEmail: (email: string, password: string, name: string) => Promise<void>;
+  signInWithEmail: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   loading: boolean;
   isAuthReady: boolean;
@@ -120,91 +82,64 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [loading, setLoading] = useState(true);
   const [isAuthReady, setIsAuthReady] = useState(false);
 
+  // Local Storage Mock Auth
   useEffect(() => {
-    const testConnection = async () => {
-      try {
-        await getDocFromServer(doc(db, 'test', 'connection'));
-      } catch (error) {
-        if (error instanceof Error && error.message.includes('the client is offline')) {
-          console.error("Please check your Firebase configuration.");
-        }
-      }
-    };
-    testConnection();
-  }, []);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        const userDocRef = doc(db, 'users', firebaseUser.uid);
-        
-        // Listen for real-time updates to the user document
-        const unsubDoc = onSnapshot(userDocRef, (docSnap) => {
-          if (docSnap.exists()) {
-            const userData = docSnap.data() as any;
-            setUser({
-              uid: firebaseUser.uid,
-              name: userData.name || firebaseUser.displayName || 'User',
-              email: userData.email || firebaseUser.email || '',
-              company: userData.company || '',
-              user_plan: userData.user_plan || 'Free',
-              planLevel: PLAN_RANK[userData.user_plan as PlanLevel] || 0,
-              usage: userData.usage || { resumesUploaded: 0 }
-            });
-          } else {
-            // Create default user document if it doesn't exist
-            const newUser: User = {
-              uid: firebaseUser.uid,
-              name: firebaseUser.displayName || 'User',
-              email: firebaseUser.email || '',
-              company: '',
-              user_plan: 'Free',
-              planLevel: 0,
-              usage: { resumesUploaded: 0 }
-            };
-            setDoc(userDocRef, newUser).catch(err => handleFirestoreError(err, OperationType.WRITE, `users/${firebaseUser.uid}`));
-            setUser(newUser);
-          }
-          setLoading(false);
-          setIsAuthReady(true);
-        }, (error) => {
-          handleFirestoreError(error, OperationType.GET, `users/${firebaseUser.uid}`);
-        });
-
-        return () => unsubDoc();
-      } else {
-        setUser(null);
-        setLoading(false);
-        setIsAuthReady(true);
-      }
-    });
-
-    return () => unsubscribe();
+    const storedUser = localStorage.getItem('hiremind_user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+    setLoading(false);
+    setIsAuthReady(true);
   }, []);
 
   const login = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      await signInWithPopup(auth, provider);
-    } catch (error: any) {
-      if (error.code === 'auth/cancelled-popup-request') {
-        console.log('Login popup request was cancelled by a newer request.');
-        return;
-      }
-      if (error.code === 'auth/popup-closed-by-user') {
-        console.log('Login popup was closed by the user.');
-        return;
-      }
-      console.error('Login error:', error);
-    }
+    // Mock Google Login
+    const mockUser: User = {
+      uid: 'google-mock-uid',
+      name: 'Google User',
+      email: 'google@example.com',
+      company: 'Google Inc.',
+      user_plan: 'Free',
+      planLevel: 0,
+      usage: { resumesUploaded: 0 }
+    };
+    setUser(mockUser);
+    localStorage.setItem('hiremind_user', JSON.stringify(mockUser));
+  };
+
+  const signUpWithEmail = async (email: string, password: string, name: string) => {
+    // Mock Email Sign Up
+    const mockUser: User = {
+      uid: `mock-uid-${Date.now()}`,
+      name: name,
+      email: email,
+      company: '',
+      user_plan: 'Free',
+      planLevel: 0,
+      usage: { resumesUploaded: 0 }
+    };
+    setUser(mockUser);
+    localStorage.setItem('hiremind_user', JSON.stringify(mockUser));
+  };
+
+  const signInWithEmail = async (email: string, password: string) => {
+    // Mock Email Sign In
+    const mockUser: User = {
+      uid: 'mock-uid-123',
+      name: email.split('@')[0],
+      email: email,
+      company: '',
+      user_plan: 'Free',
+      planLevel: 0,
+      usage: { resumesUploaded: 0 }
+    };
+    setUser(mockUser);
+    localStorage.setItem('hiremind_user', JSON.stringify(mockUser));
   };
 
   const logout = async () => {
-    try {
-      await auth.signOut();
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
+    setUser(null);
+    localStorage.removeItem('hiremind_user');
   };
 
   const hasAccess = (featureId: string) => {
@@ -216,16 +151,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const upgradePlan = async (plan: PlanLevel) => {
     if (user) {
-      const userDocRef = doc(db, 'users', user.uid);
-      try {
-        await setDoc(userDocRef, {
-          ...user,
-          user_plan: plan,
-          planLevel: PLAN_RANK[plan]
-        }, { merge: true });
-      } catch (error) {
-        handleFirestoreError(error, OperationType.WRITE, `users/${user.uid}`);
-      }
+      const updatedUser = {
+        ...user,
+        user_plan: plan,
+        planLevel: PLAN_RANK[plan]
+      };
+      setUser(updatedUser);
+      localStorage.setItem('hiremind_user', JSON.stringify(updatedUser));
     }
   };
 
@@ -318,6 +250,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       hasAccess,
       upgradePlan,
       login,
+      signUpWithEmail,
+      signInWithEmail,
       logout,
       loading,
       isAuthReady

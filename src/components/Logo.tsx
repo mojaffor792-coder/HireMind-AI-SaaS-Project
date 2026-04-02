@@ -19,7 +19,7 @@ export const Logo: React.FC<LogoProps> = ({ className, size = 40 }) => {
         <motion.path
           d="M50 5L89.5 27.5V72.5L50 95L10.5 72.5V27.5L50 5Z"
           stroke="currentColor"
-          strokeWidth="2"
+          strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
           initial={{ pathLength: 0, opacity: 0 }}
@@ -27,22 +27,31 @@ export const Logo: React.FC<LogoProps> = ({ className, size = 40 }) => {
           transition={{ duration: 1.5, ease: "easeInOut" }}
         />
         
-        {/* Inner Abstract Brain/Network Shape */}
+        {/* Mirrored Curved Paths (Matching User Image) */}
         <motion.path
-          d="M35 35C35 26.7157 41.7157 20 50 20C58.2843 20 65 26.7157 65 35C65 43.2843 58.2843 50 50 50C41.7157 50 35 56.7157 35 65C35 73.2843 41.7157 80 50 80C58.2843 80 65 73.2843 65 65"
+          d="M50 35C41.7157 35 35 41.7157 35 50C35 58.2843 41.7157 65 50 65"
           stroke="currentColor"
-          strokeWidth="6"
+          strokeWidth="8"
           strokeLinecap="round"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 0.8 }}
-          transition={{ duration: 2, delay: 0.5, ease: "easeInOut" }}
+          initial={{ pathLength: 0, opacity: 0, rotate: -45 }}
+          animate={{ pathLength: 1, opacity: 1, rotate: 0 }}
+          transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
+        />
+        <motion.path
+          d="M50 35C58.2843 35 65 41.7157 65 50C65 58.2843 58.2843 65 50 65"
+          stroke="currentColor"
+          strokeWidth="8"
+          strokeLinecap="round"
+          initial={{ pathLength: 0, opacity: 0, rotate: 45 }}
+          animate={{ pathLength: 1, opacity: 1, rotate: 0 }}
+          transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
         />
 
         {/* Central Core Node */}
         <motion.circle
           cx="50"
           cy="50"
-          r="8"
+          r="6"
           fill="currentColor"
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -50,7 +59,7 @@ export const Logo: React.FC<LogoProps> = ({ className, size = 40 }) => {
             type: "spring", 
             stiffness: 260, 
             damping: 20,
-            delay: 1 
+            delay: 1.2 
           }}
         />
 

@@ -45,7 +45,12 @@ export const SplashScreen: React.FC<{ onComplete: () => void }> = ({ onComplete 
         />
       </div>
 
-      <div className="relative z-10 w-full max-w-5xl px-6 flex flex-col items-center text-center">
+      <motion.div 
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 0.9, opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        className="relative z-10 w-full max-w-5xl px-6 flex flex-col items-center text-center"
+      >
         {/* Logo Section */}
         <motion.div
           initial={{ y: -20, opacity: 0 }}
@@ -93,7 +98,6 @@ export const SplashScreen: React.FC<{ onComplete: () => void }> = ({ onComplete 
           <button
             onClick={() => {
               onComplete();
-              navigate('/dashboard');
             }}
             className="group relative px-8 py-4 bg-gradient-to-r from-[#6C63FF] via-[#4F46E5] to-[#2563EB] text-white font-bold rounded-2xl shadow-[0_15px_30px_rgba(79,70,229,0.3)] hover:shadow-[0_20px_40px_rgba(79,70,229,0.4)] transition-all hover:scale-105 active:scale-95 flex items-center gap-3 overflow-hidden"
           >
@@ -115,7 +119,6 @@ export const SplashScreen: React.FC<{ onComplete: () => void }> = ({ onComplete 
         <button 
           onClick={() => {
             onComplete();
-            navigate('/dashboard');
           }}
           className="absolute top-8 right-8 text-xs font-bold text-gray-400 hover:text-gray-600 uppercase tracking-widest transition-colors"
         >
@@ -142,7 +145,7 @@ export const SplashScreen: React.FC<{ onComplete: () => void }> = ({ onComplete 
             Trusted by Teams
           </div>
         </motion.div>
-      </div>
+      </motion.div>
 
       {/* Footer Micro-text */}
       <div className="absolute bottom-8 text-[10px] font-bold text-gray-300 uppercase tracking-[0.4em]">
