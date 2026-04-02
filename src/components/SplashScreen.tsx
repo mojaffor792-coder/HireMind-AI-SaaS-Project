@@ -5,7 +5,7 @@ import { cn } from '../lib/utils';
 import { Logo } from './Logo';
 import { useNavigate } from 'react-router-dom';
 
-export const SplashScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
+export const SplashScreen: React.FC<{ onComplete: () => void; onViewPricing: () => void }> = ({ onComplete, onViewPricing }) => {
   const navigate = useNavigate();
 
   return (
@@ -108,7 +108,7 @@ export const SplashScreen: React.FC<{ onComplete: () => void }> = ({ onComplete 
           </button>
 
           <button
-            onClick={() => navigate('/pricing')}
+            onClick={onViewPricing}
             className="px-8 py-4 bg-white border border-gray-200 text-gray-600 font-bold rounded-2xl hover:bg-gray-50 hover:border-gray-300 transition-all hover:scale-105 active:scale-95 shadow-sm"
           >
             View Pricing

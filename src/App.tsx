@@ -163,92 +163,100 @@ const AppContent: React.FC = () => {
   };
 
   if (showSplash) {
-    return <SplashScreen onComplete={() => { 
-      setShowSplash(false); 
-      if (user) {
-        navigate('/dashboard');
-      } else {
-        navigate('/auth');
-      }
-    }} />;
+    return (
+      <SplashScreen 
+        onComplete={() => { 
+          setShowSplash(false); 
+          if (user) {
+            navigate('/dashboard');
+          } else {
+            navigate('/auth');
+          }
+        }} 
+        onViewPricing={() => {
+          setShowSplash(false);
+          navigate('/pricing');
+        }}
+      />
+    );
   }
 
   return (
-    <Routes>
-      <Route path="/" element={<Navigate to="/dashboard" />} />
-      <Route path="/auth" element={<AuthPage />} />
-      <Route path="/pricing" element={<div className="min-h-screen bg-gray-50 p-8"><Pricing highlightedPlan={null} onSelect={() => navigate('/dashboard')} onBack={() => navigate(-1)} /></div>} />
-      <Route path="/payment-success" element={<PaymentSuccess />} />
-      <Route path="/checkout" element={<ProtectedRoute><CheckoutRedirect /></ProtectedRoute>} />
-      
-      <Route path="/:tab" element={
-        <ProtectedRoute>
-          <div className="flex min-h-screen bg-gray-50 text-gray-900 font-sans selection:bg-blue-500/30">
-            <Sidebar 
-              activeTab={activeTab} 
-              setActiveTab={(tab) => navigate(`/${tab}`)} 
-              onLockedClick={handleLockedClick}
-            />
-            
-            <main className="flex-1 flex flex-col h-screen overflow-hidden">
-              <header className="h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white/80 backdrop-blur-xl z-10">
-                <div className="flex items-center gap-4">
-                  <h2 className="text-lg font-bold capitalize text-gray-900">{activeTab.replace('-', ' ')}</h2>
-                  <div className="h-4 w-px bg-gray-200 mx-2" />
-                  <div className="relative group">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
-                    <input 
-                      type="text" 
-                      placeholder="Search anything..."
-                      className="bg-gray-100 border border-transparent rounded-xl py-2 pl-10 pr-4 text-base text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/50 w-64 transition-all"
-                    />
+    <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center"><Loader2 className="w-12 h-12 text-blue-600 animate-spin" /></div>}>
+      <Routes>
+        <Route path="/" element={<Navigate to="/dashboard" />} />
+        <Route path="/auth" element={<AuthPage />} />
+        <Route path="/pricing" element={<div className="min-h-screen bg-gray-50 p-8"><Pricing highlightedPlan={null} onSelect={() => navigate('/dashboard')} onBack={() => navigate(-1)} /></div>} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/checkout" element={<ProtectedRoute><CheckoutRedirect /></ProtectedRoute>} />
+        
+        <Route path="/:tab" element={
+          <ProtectedRoute>
+            <div className="flex min-h-screen bg-gray-50 text-gray-900 font-sans selection:bg-blue-500/30">
+              <Sidebar 
+                activeTab={activeTab} 
+                setActiveTab={(tab) => navigate(`/${tab}`)} 
+                onLockedClick={handleLockedClick}
+              />
+              
+              <main className="flex-1 flex flex-col h-screen overflow-hidden">
+                <header className="h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white/80 backdrop-blur-xl z-10">
+                  <div className="flex items-center gap-4">
+                    <h2 className="text-lg font-bold capitalize text-gray-900">{activeTab.replace('-', ' ')}</h2>
+                    <div className="h-4 w-px bg-gray-200 mx-2" />
+                    <div className="relative group">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
+                      <input 
+                        type="text" 
+                        placeholder="Search anything..."
+                        className="bg-gray-100 border border-transparent rounded-xl py-2 pl-10 pr-4 text-base text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/50 w-64 transition-all"
+                      />
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex items-center gap-6">
-                  <button className="relative p-2 text-gray-400 hover:text-gray-600 transition-all">
-                    <Bell className="w-5 h-5" />
-                    <span className="absolute top-2 right-2 w-2 h-2 bg-blue-500 rounded-full border-2 border-white" />
-                  </button>
-                  
-                  <div className="flex items-center gap-3 pl-6 border-l border-gray-200">
-                    {user ? (
-                      <>
-                        <div className="text-right">
-                          <p className="text-base font-bold text-gray-900 leading-none">{user.name}</p>
-                          <p className="text-xs text-gray-500 font-medium mt-1 uppercase tracking-wider">{user.company || 'Personal'}</p>
-                        </div>
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/10">
-                          <User className="w-6 h-6 text-white" />
-                        </div>
+                  <div className="flex items-center gap-6">
+                    <button className="relative p-2 text-gray-400 hover:text-gray-600 transition-all">
+                      <Bell className="w-5 h-5" />
+                      <span className="absolute top-2 right-2 w-2 h-2 bg-blue-500 rounded-full border-2 border-white" />
+                    </button>
+                    
+                    <div className="flex items-center gap-3 pl-6 border-l border-gray-200">
+                      {user ? (
+                        <>
+                          <div className="text-right">
+                            <p className="text-base font-bold text-gray-900 leading-none">{user.name}</p>
+                            <p className="text-xs text-gray-500 font-medium mt-1 uppercase tracking-wider">{user.company || 'Personal'}</p>
+                          </div>
+                          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/10">
+                            <User className="w-6 h-6 text-white" />
+                          </div>
+                          <button 
+                            onClick={logout}
+                            className="p-2 text-gray-400 hover:text-rose-500 transition-all hover:bg-rose-50 rounded-xl group relative"
+                            title="Sign Out"
+                          >
+                            <LogOut className="w-5 h-5" />
+                            <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                              Sign Out
+                            </span>
+                          </button>
+                        </>
+                      ) : (
                         <button 
-                          onClick={logout}
-                          className="p-2 text-gray-400 hover:text-rose-500 transition-all hover:bg-rose-50 rounded-xl group relative"
-                          title="Sign Out"
+                          onClick={() => navigate('/auth')}
+                          className={cn(
+                            "flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20"
+                          )}
                         >
-                          <LogOut className="w-5 h-5" />
-                          <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                            Sign Out
-                          </span>
+                          <LogIn className="w-4 h-4" />
+                          Sign In
                         </button>
-                      </>
-                    ) : (
-                      <button 
-                        onClick={() => navigate('/auth')}
-                        className={cn(
-                          "flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20"
-                        )}
-                      >
-                        <LogIn className="w-4 h-4" />
-                        Sign In
-                      </button>
-                    )}
+                      )}
+                    </div>
                   </div>
-                </div>
-              </header>
+                </header>
 
-              <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
-                <Suspense fallback={<LoadingFallback />}>
+                <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={activeTab}
@@ -260,23 +268,23 @@ const AppContent: React.FC = () => {
                       {renderContent()}
                     </motion.div>
                   </AnimatePresence>
-                </Suspense>
-              </div>
+                </div>
 
-              <UpgradeModal 
-                isOpen={upgradeModal.isOpen}
-                onClose={() => setUpgradeModal({ ...upgradeModal, isOpen: false })}
-                requiredPlan={upgradeModal.requiredPlan}
-                featureName={upgradeModal.featureName}
-                onUpgrade={handleUpgradeRedirect}
-              />
-            </main>
-          </div>
-        </ProtectedRoute>
-      } />
-      
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
-    </Routes>
+                <UpgradeModal 
+                  isOpen={upgradeModal.isOpen}
+                  onClose={() => setUpgradeModal({ ...upgradeModal, isOpen: false })}
+                  requiredPlan={upgradeModal.requiredPlan}
+                  featureName={upgradeModal.featureName}
+                  onUpgrade={handleUpgradeRedirect}
+                />
+              </main>
+            </div>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      </Routes>
+    </Suspense>
   );
 };
 
